@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Projekt aplikacji WWW w języku Java (zaliczenie)
 
 ### StoreEverything
@@ -6,9 +5,8 @@
 * Dane informacji: tytuł (3-20), treść (5-500), [link], data dodania (aktualna, format dd-mm-yyyy), kategoria
 * Dane kategorii: nazwa (3-20, małe litery)
 * Dane użytkownika: imię (3-20, litery, pierwsza duża), nazwisko (3-50, litery, pierwsza duża), login (3-20, małe litery), hasło (co najmniej 5 znaków), wiek (min. 18 lat)
+* Aplikacja do zapisywania i udostępniania wartych uwagi informacji, np. strony www, listy zakupów, zaproszenia na spotkanie.
 * Główną funkcjonalnością jest umożliwienie zapisania na swoim koncie ciekawych informacji, udostępniania ich innym oraz wygodnego przeglądania i przeszukiwania w dogodnym czasie.
-
-![Image Alt text](/00-resources/db-diagram.png)
 
 ### Role użytkowników:
 * admin - zarządza użytkownikami,
@@ -52,6 +50,3 @@
 * Wygląd - obowiązkowo WCAG2.1
 * Prezentacja na forum grupy
 * Termin - ostatnie planowe zajęcia
-=======
-# store-everything
->>>>>>> a10676e (Initial commit)
