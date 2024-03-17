@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Projekt aplikacji WWW w języku Java (zaliczenie)
 
 ### StoreEverything
@@ -51,3 +52,6 @@
 * Wygląd - obowiązkowo WCAG2.1
 * Prezentacja na forum grupy
 * Termin - ostatnie planowe zajęcia
+=======
+# store-everything
+>>>>>>> a10676e (Initial commit)
