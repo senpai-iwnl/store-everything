@@ -7,7 +7,7 @@
 * Dane użytkownika: imię (3-20, litery, pierwsza duża), nazwisko (3-50, litery, pierwsza duża), login (3-20, małe litery), hasło (co najmniej 5 znaków), wiek (min. 18 lat)
 * Główną funkcjonalnością jest umożliwienie zapisania na swoim koncie ciekawych informacji, udostępniania ich innym oraz wygodnego przeglądania i przeszukiwania w dogodnym czasie.
 
-  ![Image Alt text](/00-resources/db-diagram.png)
+![Image Alt text](/00-resources/db-diagram.png)
 
 ### Role użytkowników:
 * admin - zarządza użytkownikami,
