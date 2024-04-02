@@ -1,7 +1,9 @@
 package com.example.storyeverything.model;
 
+import com.example.storyeverything.adnotation.StartsWithCapital;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.util.List;
@@ -11,20 +13,27 @@ public class UserAccount {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @NotNull
     @Column(name = "first_name", nullable = false)
-    @Size(max = 20, message = "{validation.name.size}")
+    @Size(min = 3, max = 20, message = "The field must contain between 3 to 20 characters.")
+    @StartsWithCapital
     private String firstName;
+    @NotNull
     @Column(name = "last_name", nullable = false)
-    @Size(max = 20, message = "{validation.name.size}")
+    @Size(min = 3, max = 50, message = "The field must contain between 3 to 50 characters.")
+    @StartsWithCapital
     private String lastName;
-    @Column(name = "login", nullable = false)
-    @Size(max = 20, message = "{validation.name.size}")
+    @NotNull
+    @Column(name = "login", nullable = false, unique = true)
+    @Size(min = 3, max = 20, message = "The field must contain between 3 to 20 characters.")
     private String login;
+    @NotNull
     @Column(name = "password", nullable = false)
-    @Size(max = 255, message = "{validation.name.size}")
+    @Size(min = 5, message = "The field must contain at least 5 characters.")
     private String password;
+    @NotNull
     @Column(name = "age", nullable = false)
-    @Min(value = 18, message = "{validation.age.restrictions}")
+    @Min(value = 18, message = "The field must have a value of at least 18.")
     private Integer age;
     @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Information> information;
