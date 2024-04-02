@@ -1,9 +1,9 @@
 package com.example.storyeverything.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Size;
 import java.util.List;
 
 @Entity(name = "user_account")
