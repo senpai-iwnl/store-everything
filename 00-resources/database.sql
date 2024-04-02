@@ -30,9 +30,9 @@ CREATE TABLE information (
     link TEXT, -- Można dodać walidację URL, jeśli jest potrzebna
     add_date DATE NOT NULL DEFAULT CURRENT_DATE,
     category_id INTEGER NOT NULL,
-    user_id INTEGER NOT NULL,
+    user_account_id INTEGER NOT NULL,
     FOREIGN KEY (category_id) REFERENCES category(id),
-    FOREIGN KEY (user_id) REFERENCES user_account(id)
+    FOREIGN KEY (user_account_id) REFERENCES user_account(id)
 );
 
 -- Wstawianie domyślnych wartości do tabeli ról
