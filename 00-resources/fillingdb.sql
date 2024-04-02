@@ -14,7 +14,6 @@ INSERT INTO category (name) VALUES
 -- Inserting sample data into the 'user_account' table
 INSERT INTO user_account (first_name, last_name, login, password, age, role_id) VALUES 
 ('John', 'Doe', 'johndoe', 'password123', 28, (SELECT id FROM role WHERE name = 'FULL_USER')),
-('Jane', 'Doe', 'janedoe', 'password123', 32, (SELECT id FROM role WHERE name = 'LIMITED_USER')),
 ('Alex', 'Smith', 'alexsmith', 'password123', 25, (SELECT id FROM role WHERE name = 'ADMIN')),
 ('Sara', 'Lee', 'saralee', 'password123', 30, (SELECT id FROM role WHERE name = 'GUEST')),
 ('Elena', 'Murray', 'elenam', 'securepass789', 34, (SELECT id FROM role WHERE name = 'ADMIN')),
@@ -25,11 +24,10 @@ INSERT INTO user_account (first_name, last_name, login, password, age, role_id) 
 ('Vincent', 'Vega', 'vincentv', 'jules123', 33, (SELECT id FROM role WHERE name = 'LIMITED_USER'));
 
 -- Inserting sample data into the 'information' table
-INSERT INTO information (title, content, link, category_id, user_id) VALUES 
+INSERT INTO information (title, content, link, category_id, user_account_id) VALUES 
 ('Soccer', 'Soccer games are thrilling this season.', 'http://example.com/soccer', (SELECT id FROM category WHERE name = 'sports'), (SELECT id FROM user_account WHERE login = 'johndoe')),
 ('Tech News', 'New tech gadgets released this week.', 'http://example.com/tech', (SELECT id FROM category WHERE name = 'tech'), (SELECT id FROM user_account WHERE login = 'alexsmith')),
 ('Travel Tips', 'Top 10 travel tips for budget travelers.', NULL, (SELECT id FROM category WHERE name = 'travel'), (SELECT id FROM user_account WHERE login = 'saralee')),
-('Health Update', 'Daily exercise tips for a healthy lifestyle.', 'http://example.com/health', (SELECT id FROM category WHERE name = 'health'), (SELECT id FROM user_account WHERE login = 'janedoe')),
 ('Finance Tips', '5 Essential tips for personal finance.', 'http://example.com/finance', (SELECT id FROM category WHERE name = 'finance'), (SELECT id FROM user_account WHERE login = 'elenam')),
 ('Healthy Eating', 'Guide to healthy eating habits.', 'http://example.com/food', (SELECT id FROM category WHERE name = 'food'), (SELECT id FROM user_account WHERE login = 'marcop')),
 ('Online Education', 'Top platforms for online learning.', NULL, (SELECT id FROM category WHERE name = 'education'), (SELECT id FROM user_account WHERE login = 'lucyheart')),

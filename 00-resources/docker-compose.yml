@@ -5,8 +5,8 @@ services:
     image: postgres
     restart: always
     environment:
-      POSTGRES_USER: syzyf
-      POSTGRES_PASSWORD: mamdosc
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
     ports:
       - "5432:5432"  # Przekierowuje port 5432 z hosta na port 5432 w kontenerze
     volumes:
