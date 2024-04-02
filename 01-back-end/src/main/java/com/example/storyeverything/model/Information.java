@@ -2,7 +2,7 @@ package com.example.storyeverything.model;
 
 import jakarta.persistence.*;
 
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.Date;
 
