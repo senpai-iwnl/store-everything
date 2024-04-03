@@ -1,6 +1,7 @@
 package com.example.storyeverything.service.impl;
 
 import com.example.storyeverything.dto.CategoryDTO;
+import com.example.storyeverything.exception.FieldNotFoundException;
 import com.example.storyeverything.mapper.CategoryMapper;
 import com.example.storyeverything.model.Category;
 import com.example.storyeverything.repository.CategoryRepository;
@@ -29,7 +30,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDTO findById(long id) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Did not find category id - " + id));
+                .orElseThrow(() -> new FieldNotFoundException("Category", "id", id));
         return categoryMapper.toDTO(category);
     }
 
@@ -44,13 +45,16 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     public CategoryDTO update(long id, CategoryDTO categoryDTO) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Did not find category id - " + id));
+                .orElseThrow(() -> new FieldNotFoundException("Category", "id", id));
         categoryMapper.updateCategoryFromDTO(categoryDTO, category);
         return categoryMapper.toDTO(category);
     }
 
     @Override
     public void deleteById(long id) {
+        if(categoryRepository.findById(id) == null)
+            throw new FieldNotFoundException("Category", "id", id);
+
         categoryRepository.deleteById(id);
     }
 }

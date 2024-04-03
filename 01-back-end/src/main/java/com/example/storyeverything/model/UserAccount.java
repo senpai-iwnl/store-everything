@@ -1,6 +1,6 @@
 package com.example.storyeverything.model;
 
-import com.example.storyeverything.adnotation.StartsWithCapital;
+import com.example.storyeverything.annotation.StartsWithCapital;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;

@@ -1,6 +1,6 @@
 package com.example.storyeverything.validation;
 
-import com.example.storyeverything.adnotation.StartsWithCapital;
+import com.example.storyeverything.annotation.StartsWithCapital;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

@@ -90,7 +90,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     @Override
     public void deleteById(long id) {
-        if(userAccountRepository.findById(id).isEmpty())
+        if(userAccountRepository.findById(id) == null)
             throw new FieldNotFoundException("UserAccount", "id", id);
 
         userAccountRepository.deleteById(id);
