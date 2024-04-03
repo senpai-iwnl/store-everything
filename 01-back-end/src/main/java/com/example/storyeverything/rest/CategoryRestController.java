@@ -2,6 +2,7 @@ package com.example.storyeverything.rest;
 
 import com.example.storyeverything.dto.CategoryDTO;
 import com.example.storyeverything.service.CategoryService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,13 +31,13 @@ public class CategoryRestController {
     }
 
     @PostMapping("/categories")
-    public ResponseEntity<CategoryDTO> add(@RequestBody CategoryDTO categoryDTO){
+    public ResponseEntity<CategoryDTO> add(@Valid @RequestBody CategoryDTO categoryDTO){
         CategoryDTO newCategory = categoryService.create(categoryDTO);
         return new ResponseEntity<>(newCategory, HttpStatus.CREATED);
     }
 
     @PutMapping("/categories/{id}")
-    public ResponseEntity<CategoryDTO> update(@PathVariable long id, @RequestBody CategoryDTO categoryDTO){
+    public ResponseEntity<CategoryDTO> update(@PathVariable long id,@Valid @RequestBody CategoryDTO categoryDTO){
         CategoryDTO updatedCategory = categoryService.update(id, categoryDTO);
         return ResponseEntity.ok(updatedCategory);
     }
