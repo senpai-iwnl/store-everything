@@ -1,6 +1,7 @@
 package com.example.storyeverything.service.impl;
 
 import com.example.storyeverything.dto.InformationDTO;
+import com.example.storyeverything.exception.FieldNotFoundException;
 import com.example.storyeverything.mapper.InformationMapper;
 import com.example.storyeverything.model.Category;
 import com.example.storyeverything.model.Information;
@@ -53,14 +54,13 @@ public class InformationServiceImpl implements InformationService {
     @Override
     public InformationDTO findById(long id) {
         Information information = informationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Did not find information id - " + id));
+                .orElseThrow(() -> new FieldNotFoundException("Information", "id", id));
         return informationMapper.toDTO(information);
     }
 
     @Override
     public InformationDTO create(InformationDTO informationDTO) {
         Information information = informationMapper.toEntity(informationDTO);
-        information.setAddDate(LocalDate.now());
         information = informationRepository.save(information);
         return informationMapper.toDTO(information);
     }
@@ -69,19 +69,28 @@ public class InformationServiceImpl implements InformationService {
     @Transactional
     public InformationDTO update(long id, InformationDTO informationDTO) {
         Information information = informationRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("Did not find information id - " + id));
-        UserAccount userAccount = userAccountRepository.findById(informationDTO.getUserAccountId())
-                .orElseThrow(()-> new RuntimeException("Did not find user id - " + id));
-        Category category = categoryRepository.findById(informationDTO.getCategoryId())
-                .orElseThrow(()-> new RuntimeException("Did not find category id - " + id));
+                .orElseThrow(()-> new FieldNotFoundException("Information", "id", id));
+
+        long userAccountId = informationDTO.getUserAccountId();
+        UserAccount userAccount = userAccountRepository.findById(userAccountId)
+                .orElseThrow(()-> new FieldNotFoundException("UserAccount", "id", userAccountId));
+
+        String categoryName = informationDTO.getCategoryName();
+        Category category = categoryRepository.findByName(categoryName)
+                .orElseThrow(()-> new FieldNotFoundException("Category", "name", categoryName));
+
         information.setUserAccount(userAccount);
         information.setCategory(category);
-        informationMapper.updateUserAccountFromDTO(informationDTO, information);
+
+        informationMapper.updateInformationFromDTO(informationDTO, information);
         return informationMapper.toDTO(information);
     }
 
     @Override
     public void deleteById(long id) {
+        if(informationRepository.findById(id).isEmpty())
+            throw new FieldNotFoundException("Information", "id", id);
+
         informationRepository.deleteById(id);
     }
 }
