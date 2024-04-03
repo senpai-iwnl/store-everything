@@ -52,7 +52,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void deleteById(long id) {
-        if(categoryRepository.findById(id) == null)
+        if(categoryRepository.findById(id).isEmpty())
             throw new FieldNotFoundException("Category", "id", id);
 
         categoryRepository.deleteById(id);

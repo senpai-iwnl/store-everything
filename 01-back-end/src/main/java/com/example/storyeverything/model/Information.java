@@ -2,6 +2,7 @@ package com.example.storyeverything.model;
 
 import jakarta.persistence.*;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.Date;
@@ -12,10 +13,13 @@ public class Information {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @NotNull
     @Column(name = "title", nullable = false)
-    @Size(max = 20, message = "{validation.name.size}")
+    @Size(min = 3, max = 20, message = "The field must contain between 3 to 20 characters.")
     private String title;
+    @NotNull
     @Column(name = "content", nullable = false, columnDefinition = "TEXT")
+    @Size(min = 5, max = 500, message = "The field must contain between 5 to 500 characters.")
     private String content;
     @Column(name = "link", columnDefinition = "TEXT")
     private String link;

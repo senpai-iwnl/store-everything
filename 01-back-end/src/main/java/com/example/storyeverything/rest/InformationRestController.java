@@ -2,6 +2,7 @@ package com.example.storyeverything.rest;
 
 import com.example.storyeverything.dto.InformationDTO;
 import com.example.storyeverything.service.InformationService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,21 +43,20 @@ public class InformationRestController {
     }
 
     @PostMapping("/information")
-    public ResponseEntity<InformationDTO> add(@RequestBody InformationDTO informationDTO){
+    public ResponseEntity<InformationDTO> add(@Valid @RequestBody InformationDTO informationDTO){
         InformationDTO newInformation = informationService.create(informationDTO);
         return new ResponseEntity<>(newInformation, HttpStatus.CREATED);
     }
 
     @PutMapping("/information/{id}")
-    public ResponseEntity<InformationDTO> update(@PathVariable long id, @RequestBody InformationDTO informationDTO){
+    public ResponseEntity<InformationDTO> update(@PathVariable long id,@Valid @RequestBody InformationDTO informationDTO){
         InformationDTO updatedInformation = informationService.update(id, informationDTO);
         return ResponseEntity.ok(updatedInformation);
     }
 
     @DeleteMapping("/information/{id}")
     public ResponseEntity<Void> delete(@PathVariable long id){
-        if(informationService.findById(id) == null)
-            throw new RuntimeException("Information id not found - " + id);
+
 
         informationService.deleteById(id);
 

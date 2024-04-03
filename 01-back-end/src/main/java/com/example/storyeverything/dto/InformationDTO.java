@@ -8,19 +8,19 @@ public class InformationDTO {
     private String content;
     private String link;
     private LocalDate addDate;
-    private long categoryId;
+    private String categoryName;
     private long userAccountId;
 
     public InformationDTO() {
     }
 
-    public InformationDTO(long id, String title, String content, String link, LocalDate addDate, long categoryId, long userAccountId) {
+    public InformationDTO(long id, String title, String content, String link, LocalDate addDate, String categoryName, long userAccountId) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.link = link;
         this.addDate = addDate;
-        this.categoryId = categoryId;
+        this.categoryName = categoryName;
         this.userAccountId = userAccountId;
     }
 
@@ -64,12 +64,12 @@ public class InformationDTO {
         this.addDate = addDate;
     }
 
-    public long getCategoryId() {
-        return categoryId;
+    public String getCategoryName() {
+        return categoryName;
     }
 
-    public void setCategoryId(long categoryId) {
-        this.categoryId = categoryId;
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
     public long getUserAccountId() {
