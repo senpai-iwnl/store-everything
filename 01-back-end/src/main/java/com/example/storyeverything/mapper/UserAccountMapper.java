@@ -17,6 +17,7 @@ public interface UserAccountMapper {
 
     UserAccountMapper INSTANCE = Mappers.getMapper(UserAccountMapper.class);
     @Mapping(target = "roleId", source = "role.id")
+    @Mapping(target = "password", ignore = true)
     UserAccountDTO toDTO(UserAccount userAccount);
     List<UserAccountDTO> toDTOList(List<UserAccount> userAccounts);
     @Mapping(target = "role.id", ignore = true)
