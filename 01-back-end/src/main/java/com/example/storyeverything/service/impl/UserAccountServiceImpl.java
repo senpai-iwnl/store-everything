@@ -61,12 +61,14 @@ public class UserAccountServiceImpl implements UserAccountService {
     @Override
     @Transactional
     public UserAccountDTO updateAsUser(long id, UserAccountDTO userAccountDTO) {
-        if (!isLoginAvailable(userAccountDTO.getLogin())) {
+        UserAccount userAccount = userAccountRepository.findById(id)
+                .orElseThrow(() -> new FieldNotFoundException("UserAccount", "id", id));
+
+
+        if (!userAccount.getLogin().equals(userAccountDTO.getLogin()) && !isLoginAvailable(userAccountDTO.getLogin())) {
             throw new DuplicateLoginException("Login is already in use");
         }
 
-        UserAccount userAccount = userAccountRepository.findById(id)
-                .orElseThrow(() -> new FieldNotFoundException("UserAccount", "id", id));
 
         userAccountMapper.updateUserAccountFromDTOAsUser(userAccountDTO, userAccount);
         userAccount = userAccountRepository.save(userAccount);
@@ -77,12 +79,15 @@ public class UserAccountServiceImpl implements UserAccountService {
     @Override
     @Transactional
     public UserAccountDTO updateAsAdmin(long id, UserAccountDTO userAccountDTO) {
-        if (!isLoginAvailable(userAccountDTO.getLogin())) {
+        UserAccount userAccount = userAccountRepository.findById(id)
+                .orElseThrow(() -> new FieldNotFoundException("UserAccount", "id", id));
+
+
+        if (!userAccount.getLogin().equals(userAccountDTO.getLogin()) && !isLoginAvailable(userAccountDTO.getLogin())) {
             throw new DuplicateLoginException("Login is already in use");
         }
 
-        UserAccount userAccount = userAccountRepository.findById(id)
-                .orElseThrow(() -> new FieldNotFoundException("UserAccount", "id", id));
+
 
         Role newRole = roleRepository.findById(userAccountDTO.getRoleId())
                 .orElseThrow(() -> new FieldNotFoundException("Role", "id", userAccountDTO.getRoleId()));
