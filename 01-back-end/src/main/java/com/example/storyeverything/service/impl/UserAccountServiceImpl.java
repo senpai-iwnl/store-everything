@@ -45,7 +45,11 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
+<<<<<<< HEAD
     public UserAccountDTO createAsUser(UserAccountDTO userAccountDTO) {
+=======
+    public UserAccountDTO create(UserAccountDTO userAccountDTO) {
+>>>>>>> 6f3763a0ef61fd30eacb6d3fcb695bef2b8d9ec4
         if (!isLoginAvailable(userAccountDTO.getLogin())) {
             throw new DuplicateLoginException("Login is already in use");
         }
@@ -59,17 +63,29 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
+<<<<<<< HEAD
     public UserAccountDTO createAsAdmin(UserAccountDTO userAccountDTO) {
+=======
+    @Transactional
+    public UserAccountDTO update(long id, UserAccountDTO userAccountDTO) {
+>>>>>>> 6f3763a0ef61fd30eacb6d3fcb695bef2b8d9ec4
         if (!isLoginAvailable(userAccountDTO.getLogin())) {
             throw new DuplicateLoginException("Login is already in use");
         }
 
+<<<<<<< HEAD
         UserAccount userAccount = userAccountMapper.toEntity(userAccountDTO);
         // default user role
         Role newRole = roleRepository.findById(userAccountDTO.getRoleId())
                 .orElseThrow(() -> new FieldNotFoundException("Role", "id", userAccountDTO.getRoleId()));
 
         userAccount.setRole(newRole);
+=======
+        UserAccount userAccount = userAccountRepository.findById(id)
+                .orElseThrow(() -> new FieldNotFoundException("UserAccount", "id", id));
+
+        userAccountMapper.updateUserAccountFromDTO(userAccountDTO, userAccount);
+>>>>>>> 6f3763a0ef61fd30eacb6d3fcb695bef2b8d9ec4
         userAccount = userAccountRepository.save(userAccount);
 
         return userAccountMapper.toDTO(userAccount);
@@ -77,6 +93,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     @Override
     @Transactional
+<<<<<<< HEAD
     public UserAccountDTO updateAsUser(long id, UserAccountDTO userAccountDTO) {
         UserAccount userAccount = userAccountRepository.findById(id)
                 .orElseThrow(() -> new FieldNotFoundException("UserAccount", "id", id));
@@ -112,6 +129,15 @@ public class UserAccountServiceImpl implements UserAccountService {
         userAccount.setRole(newRole);
 
         userAccountMapper.updateUserAccountFromDTOAsAdmin(userAccountDTO, userAccount);
+=======
+    public UserAccountDTO updateRole(long id, String role) {
+        UserAccount userAccount = userAccountRepository.findById(id)
+                .orElseThrow(() -> new FieldNotFoundException("UserAccount", "id", id));
+        Role newRole = roleRepository.findByRole(role)
+                .orElseThrow(() -> new FieldNotFoundException("Role", "name", role));
+
+        userAccount.setRole(newRole);
+>>>>>>> 6f3763a0ef61fd30eacb6d3fcb695bef2b8d9ec4
         userAccount = userAccountRepository.save(userAccount);
 
         return userAccountMapper.toDTO(userAccount);
