@@ -42,14 +42,14 @@ public class UserAccountRestController {
 
     @PutMapping("/users/{id}")
     public ResponseEntity<UserAccountDTO> update(@PathVariable long id,@Valid @RequestBody UserAccountDTO userAccountDTO){
-        UserAccountDTO updatedUserAccount = userAccountService.update(id, userAccountDTO);
+        UserAccountDTO updatedUserAccount = userAccountService.updateAsUser(id, userAccountDTO);
 
         return ResponseEntity.ok(updatedUserAccount);
     }
 
-    @PutMapping("/users/{id}/role")
-    public ResponseEntity<UserAccountDTO> updateRole(@PathVariable long id, @RequestBody UserRoleUpdateDTO userRoleUpdateDTO){
-        UserAccountDTO updatedUser = userAccountService.updateRole(id, userRoleUpdateDTO.getRole());
+    @PutMapping("/users/{id}/admin")
+    public ResponseEntity<UserAccountDTO> updateRole(@PathVariable long id, @RequestBody UserAccountDTO userAccountDTO){
+        UserAccountDTO updatedUser = userAccountService.updateAsAdmin(id, userAccountDTO);
 
         return ResponseEntity.ok(updatedUser);
     }

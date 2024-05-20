@@ -7,9 +7,6 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
@@ -23,5 +20,10 @@ public interface UserAccountMapper {
     @Mapping(target = "role.id", ignore = true)
     UserAccount toEntity(UserAccountDTO userAccountDTO);
     @Mapping(target = "id", ignore = true)
-    void updateUserAccountFromDTO(UserAccountDTO userAccountDTO, @MappingTarget UserAccount userAccount);
+    @Mapping(source = "roleId", target = "role.id")
+    void updateUserAccountFromDTOAsAdmin(UserAccountDTO userAccountDTO, @MappingTarget UserAccount userAccount);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "role", ignore = true)
+    void updateUserAccountFromDTOAsUser(UserAccountDTO userAccountDTO, @MappingTarget UserAccount userAccount);
 }

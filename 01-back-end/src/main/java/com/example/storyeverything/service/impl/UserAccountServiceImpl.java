@@ -60,7 +60,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     @Override
     @Transactional
-    public UserAccountDTO update(long id, UserAccountDTO userAccountDTO) {
+    public UserAccountDTO updateAsUser(long id, UserAccountDTO userAccountDTO) {
         if (!isLoginAvailable(userAccountDTO.getLogin())) {
             throw new DuplicateLoginException("Login is already in use");
         }
@@ -68,7 +68,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         UserAccount userAccount = userAccountRepository.findById(id)
                 .orElseThrow(() -> new FieldNotFoundException("UserAccount", "id", id));
 
-        userAccountMapper.updateUserAccountFromDTO(userAccountDTO, userAccount);
+        userAccountMapper.updateUserAccountFromDTOAsUser(userAccountDTO, userAccount);
         userAccount = userAccountRepository.save(userAccount);
 
         return userAccountMapper.toDTO(userAccount);
@@ -76,13 +76,20 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     @Override
     @Transactional
-    public UserAccountDTO updateRole(long id, String role) {
+    public UserAccountDTO updateAsAdmin(long id, UserAccountDTO userAccountDTO) {
+        if (!isLoginAvailable(userAccountDTO.getLogin())) {
+            throw new DuplicateLoginException("Login is already in use");
+        }
+
         UserAccount userAccount = userAccountRepository.findById(id)
                 .orElseThrow(() -> new FieldNotFoundException("UserAccount", "id", id));
-        Role newRole = roleRepository.findByRole(role)
-                .orElseThrow(() -> new FieldNotFoundException("Role", "name", role));
+
+        Role newRole = roleRepository.findById(userAccountDTO.getRoleId())
+                .orElseThrow(() -> new FieldNotFoundException("Role", "id", userAccountDTO.getRoleId()));
 
         userAccount.setRole(newRole);
+
+        userAccountMapper.updateUserAccountFromDTOAsAdmin(userAccountDTO, userAccount);
         userAccount = userAccountRepository.save(userAccount);
 
         return userAccountMapper.toDTO(userAccount);
