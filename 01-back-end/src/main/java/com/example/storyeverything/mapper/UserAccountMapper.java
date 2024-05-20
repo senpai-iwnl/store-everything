@@ -17,7 +17,6 @@ public interface UserAccountMapper {
     @Mapping(target = "password", ignore = true)
     UserAccountDTO toDTO(UserAccount userAccount);
     List<UserAccountDTO> toDTOList(List<UserAccount> userAccounts);
-    @Mapping(target = "role.id", ignore = true)
     UserAccount toEntity(UserAccountDTO userAccountDTO);
     @Mapping(target = "id", ignore = true)
     @Mapping(source = "roleId", target = "role.id")

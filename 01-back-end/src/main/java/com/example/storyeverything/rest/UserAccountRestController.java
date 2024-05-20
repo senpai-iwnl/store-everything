@@ -1,7 +1,6 @@
 package com.example.storyeverything.rest;
 
 import com.example.storyeverything.dto.UserAccountDTO;
-import com.example.storyeverything.dto.UserRoleUpdateDTO;
 import com.example.storyeverything.service.UserAccountService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -34,14 +33,21 @@ public class UserAccountRestController {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<UserAccountDTO> add(@Valid @RequestBody UserAccountDTO userAccountDTO){
-        UserAccountDTO newUserAccount = userAccountService.create(userAccountDTO);
+    public ResponseEntity<UserAccountDTO> addAsUser(@Valid @RequestBody UserAccountDTO userAccountDTO){
+        UserAccountDTO newUserAccount = userAccountService.createAsUser(userAccountDTO);
+
+        return new ResponseEntity<>(newUserAccount, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/users/admin")
+    public ResponseEntity<UserAccountDTO> addAsAdmin(@Valid @RequestBody UserAccountDTO userAccountDTO){
+        UserAccountDTO newUserAccount = userAccountService.createAsAdmin(userAccountDTO);
 
         return new ResponseEntity<>(newUserAccount, HttpStatus.CREATED);
     }
 
     @PutMapping("/users/{id}")
-    public ResponseEntity<UserAccountDTO> update(@PathVariable long id,@Valid @RequestBody UserAccountDTO userAccountDTO){
+    public ResponseEntity<UserAccountDTO> updateAsUser(@PathVariable long id,@Valid @RequestBody UserAccountDTO userAccountDTO){
         UserAccountDTO updatedUserAccount = userAccountService.updateAsUser(id, userAccountDTO);
 
         return ResponseEntity.ok(updatedUserAccount);

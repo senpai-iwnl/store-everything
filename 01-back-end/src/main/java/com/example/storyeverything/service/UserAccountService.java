@@ -7,7 +7,8 @@ import java.util.List;
 public interface UserAccountService {
     List<UserAccountDTO> findAll();
     UserAccountDTO findById(long id);
-    UserAccountDTO create(UserAccountDTO userAccountDTO);
+    UserAccountDTO createAsUser(UserAccountDTO userAccountDTO);
+    UserAccountDTO createAsAdmin(UserAccountDTO userAccountDTO);
     UserAccountDTO updateAsUser(long id, UserAccountDTO userAccountDTO);
     UserAccountDTO updateAsAdmin(long id, UserAccountDTO userAccountDTO);
     void deleteById(long id);

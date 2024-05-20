@@ -45,7 +45,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
-    public UserAccountDTO create(UserAccountDTO userAccountDTO) {
+    public UserAccountDTO createAsUser(UserAccountDTO userAccountDTO) {
         if (!isLoginAvailable(userAccountDTO.getLogin())) {
             throw new DuplicateLoginException("Login is already in use");
         }
@@ -53,6 +53,23 @@ public class UserAccountServiceImpl implements UserAccountService {
         UserAccount userAccount = userAccountMapper.toEntity(userAccountDTO);
         // default user role
         userAccount.setRole(roleRepository.getById(2L));
+        userAccount = userAccountRepository.save(userAccount);
+
+        return userAccountMapper.toDTO(userAccount);
+    }
+
+    @Override
+    public UserAccountDTO createAsAdmin(UserAccountDTO userAccountDTO) {
+        if (!isLoginAvailable(userAccountDTO.getLogin())) {
+            throw new DuplicateLoginException("Login is already in use");
+        }
+
+        UserAccount userAccount = userAccountMapper.toEntity(userAccountDTO);
+        // default user role
+        Role newRole = roleRepository.findById(userAccountDTO.getRoleId())
+                .orElseThrow(() -> new FieldNotFoundException("Role", "id", userAccountDTO.getRoleId()));
+
+        userAccount.setRole(newRole);
         userAccount = userAccountRepository.save(userAccount);
 
         return userAccountMapper.toDTO(userAccount);
