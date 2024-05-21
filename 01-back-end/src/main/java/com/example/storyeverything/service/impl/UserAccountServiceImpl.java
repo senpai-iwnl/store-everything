@@ -9,6 +9,7 @@ import com.example.storyeverything.model.UserAccount;
 import com.example.storyeverything.repository.RoleRepository;
 import com.example.storyeverything.repository.UserAccountRepository;
 import com.example.storyeverything.service.UserAccountService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,13 +21,16 @@ public class UserAccountServiceImpl implements UserAccountService {
     private final UserAccountRepository userAccountRepository;
     private final RoleRepository roleRepository;
     private final UserAccountMapper userAccountMapper;
+    private final PasswordEncoder passwordEncoder;
 
     public UserAccountServiceImpl(UserAccountRepository userAccountRepository,
                                   UserAccountMapper userAccountMapper,
-                                  RoleRepository roleRepository) {
+                                  RoleRepository roleRepository,
+                                  PasswordEncoder passwordEncoder) {
         this.userAccountRepository = userAccountRepository;
         this.userAccountMapper = userAccountMapper;
         this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -52,10 +56,12 @@ public class UserAccountServiceImpl implements UserAccountService {
 
         userAccountDTO.setRole("LIMITED_USER");
 
+        userAccountDTO.setPassword(encodingPassword(userAccountDTO.getPassword()));
+
         UserAccount userAccount = userAccountMapper.toEntity(userAccountDTO, roleRepository);
 
-        Role userRole = roleRepository.findByName("LIMITED_USER")
-                .orElseThrow(() -> new FieldNotFoundException("Role", "name", "LIMITED_USER"));
+        Role userRole = roleRepository.findByName("ROLE_LIMITED_USER")
+                .orElseThrow(() -> new FieldNotFoundException("Role", "name", "ROLE_LIMITED_USER"));
         userAccount.setRole(userRole);
 
         userAccount = userAccountRepository.save(userAccount);
@@ -91,6 +97,10 @@ public class UserAccountServiceImpl implements UserAccountService {
             throw new DuplicateLoginException("Login is already in use");
         }
 
+        if(userAccountDTO.getPassword() != null)
+            userAccountDTO.setPassword(encodingPassword(userAccountDTO.getPassword()));
+        else
+            userAccountDTO.setPassword(userAccount.getPassword());
 
         userAccountMapper.updateUserAccountFromDTOAsUser(userAccountDTO, userAccount);
         userAccount = userAccountRepository.save(userAccount);
@@ -109,12 +119,16 @@ public class UserAccountServiceImpl implements UserAccountService {
             throw new DuplicateLoginException("Login is already in use");
         }
 
+        if(userAccountDTO.getPassword() != null)
+            userAccountDTO.setPassword(encodingPassword(userAccountDTO.getPassword()));
+        else
+            userAccountDTO.setPassword(userAccount.getPassword());
 
 
-        Role newRole = roleRepository.findByName(userAccountDTO.getRole())
-                .orElseThrow(() -> new FieldNotFoundException("Role", "id", userAccountDTO.getRole()));
-
+        Role newRole = roleRepository.findByName(userAccountDTO.getRole()).orElseThrow(() -> new FieldNotFoundException("Role", "name", userAccountDTO.getRole()));
         userAccount.setRole(newRole);
+
+
         userAccountMapper.updateUserAccountFromDTOAsAdmin(userAccountDTO, userAccount, roleRepository);
 
         return userAccountMapper.toDTO(userAccount);
@@ -130,5 +144,9 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     private boolean isLoginAvailable(String login) {
         return !userAccountRepository.findByLogin(login).isPresent();
+    }
+
+    private String encodingPassword(String password){
+        return passwordEncoder.encode(password);
     }
 }
