@@ -18,7 +18,7 @@ public class UserAccountRestController {
         this.userAccountService = userAccountService;
     }
 
-    @GetMapping("/users")
+    @GetMapping("/admin/users")
     public ResponseEntity<List<UserAccountDTO>> findAll(){
         List<UserAccountDTO> userAccounts = userAccountService.findAll();
 
@@ -39,7 +39,7 @@ public class UserAccountRestController {
         return new ResponseEntity<>(newUserAccount, HttpStatus.CREATED);
     }
 
-    @PostMapping("/users/admin")
+    @PostMapping("/admin/users")
     public ResponseEntity<UserAccountDTO> addAsAdmin(@Valid @RequestBody UserAccountDTO userAccountDTO) {
         UserAccountDTO newUserAccount = userAccountService.createAsAdmin(userAccountDTO);
 
@@ -53,7 +53,7 @@ public class UserAccountRestController {
         return ResponseEntity.ok(updatedUserAccount);
     }
 
-    @PutMapping("/users/{id}/admin")
+    @PutMapping("/admin/users/{id}")
     public ResponseEntity<UserAccountDTO> updateRole(@PathVariable long id, @RequestBody UserAccountDTO userAccountDTO){
         UserAccountDTO updatedUser = userAccountService.updateAsAdmin(id, userAccountDTO);
         return ResponseEntity.ok(updatedUser);
