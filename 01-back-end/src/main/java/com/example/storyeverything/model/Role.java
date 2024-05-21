@@ -10,7 +10,7 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Column(name = "name")
-    private String role;
+    private String name;
     @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
     private List<UserAccount> userAccounts;
 
@@ -18,7 +18,7 @@ public class Role {
     }
 
     public Role(String role) {
-        this.role = role;
+        this.name = role;
     }
 
     public long getId() {
@@ -29,12 +29,12 @@ public class Role {
         this.id = id;
     }
 
-    public String getRole() {
-        return role;
+    public String getName() {
+        return name;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setName(String role) {
+        this.name = role;
     }
 
     public List<UserAccount> getUserAccounts() {
@@ -44,4 +44,5 @@ public class Role {
     public void setUserAccounts(List<UserAccount> userAccounts) {
         this.userAccounts = userAccounts;
     }
+
 }

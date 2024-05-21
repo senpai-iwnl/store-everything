@@ -50,9 +50,14 @@ public class UserAccountServiceImpl implements UserAccountService {
             throw new DuplicateLoginException("Login is already in use");
         }
 
-        UserAccount userAccount = userAccountMapper.toEntity(userAccountDTO);
-        // default user role
-        userAccount.setRole(roleRepository.getById(2L));
+        userAccountDTO.setRole("LIMITED_USER");
+
+        UserAccount userAccount = userAccountMapper.toEntity(userAccountDTO, roleRepository);
+
+        Role userRole = roleRepository.findByName("LIMITED_USER")
+                .orElseThrow(() -> new FieldNotFoundException("Role", "name", "LIMITED_USER"));
+        userAccount.setRole(userRole);
+
         userAccount = userAccountRepository.save(userAccount);
 
         return userAccountMapper.toDTO(userAccount);
@@ -64,10 +69,10 @@ public class UserAccountServiceImpl implements UserAccountService {
             throw new DuplicateLoginException("Login is already in use");
         }
 
-        UserAccount userAccount = userAccountMapper.toEntity(userAccountDTO);
+        UserAccount userAccount = userAccountMapper.toEntity(userAccountDTO, roleRepository);
         // default user role
-        Role newRole = roleRepository.findById(userAccountDTO.getRoleId())
-                .orElseThrow(() -> new FieldNotFoundException("Role", "id", userAccountDTO.getRoleId()));
+        Role newRole = roleRepository.findByName(userAccountDTO.getRole())
+                .orElseThrow(() -> new FieldNotFoundException("Role", "id", userAccountDTO.getRole()));
 
         userAccount.setRole(newRole);
         userAccount = userAccountRepository.save(userAccount);
@@ -106,11 +111,11 @@ public class UserAccountServiceImpl implements UserAccountService {
 
 
 
-        Role newRole = roleRepository.findById(userAccountDTO.getRoleId())
-                .orElseThrow(() -> new FieldNotFoundException("Role", "id", userAccountDTO.getRoleId()));
+        Role newRole = roleRepository.findByName(userAccountDTO.getRole())
+                .orElseThrow(() -> new FieldNotFoundException("Role", "id", userAccountDTO.getRole()));
 
         userAccount.setRole(newRole);
-        userAccountMapper.updateUserAccountFromDTOAsAdmin(userAccountDTO, userAccount);
+        userAccountMapper.updateUserAccountFromDTOAsAdmin(userAccountDTO, userAccount, roleRepository);
 
         return userAccountMapper.toDTO(userAccount);
     }

@@ -1,6 +1,7 @@
 package com.example.storyeverything.dto;
 
 
+import com.example.storyeverything.service.RoleService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.List;
@@ -12,21 +13,21 @@ public class UserAccountDTO {
     private String login;
     private String password;
     private int age;
-    private long roleId;
+    private String role;
     @JsonIgnore
     private List<InformationDTO> information;
 
     public UserAccountDTO() {
     }
 
-    public UserAccountDTO(long id, String firstName, String lastName, String login, String password, int age,long roleId, List<InformationDTO> information) {
+    public UserAccountDTO(long id, String firstName, String lastName, String login, String password, int age, long roleId, List<InformationDTO> information, RoleService roleService) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.login = login;
         this.password = password;
         this.age = age;
-        this.roleId = roleId;
+        this.role = roleService.getRoleNameById(roleId);
         this.information = information;
     }
 
@@ -78,12 +79,12 @@ public class UserAccountDTO {
         this.age = age;
     }
 
-    public long getRoleId() {
-        return roleId;
+    public String getRole() {
+        return role;
     }
 
-    public void setRoleId(long roleId) {
-        this.roleId = roleId;
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public List<InformationDTO> getInformation() {
