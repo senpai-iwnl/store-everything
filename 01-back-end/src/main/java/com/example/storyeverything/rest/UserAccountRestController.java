@@ -25,25 +25,31 @@ public class UserAccountRestController {
         return ResponseEntity.ok(userAccounts);
     }
 
-    @GetMapping("/users/{id}")
-    public ResponseEntity<UserAccountDTO> findById(@PathVariable long id){
-        UserAccountDTO userAccount = userAccountService.findById(id);
-
-        return ResponseEntity.ok(userAccount);
-    }
-
-    @PostMapping("/users")
-    public ResponseEntity<UserAccountDTO> addAsUser(@Valid @RequestBody UserAccountDTO userAccountDTO){
-        UserAccountDTO newUserAccount = userAccountService.createAsUser(userAccountDTO);
-
-        return new ResponseEntity<>(newUserAccount, HttpStatus.CREATED);
-    }
-
     @PostMapping("/admin/users")
     public ResponseEntity<UserAccountDTO> addAsAdmin(@Valid @RequestBody UserAccountDTO userAccountDTO) {
         UserAccountDTO newUserAccount = userAccountService.createAsAdmin(userAccountDTO);
 
         return new ResponseEntity<>(newUserAccount, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/admin/users/{id}")
+    public ResponseEntity<UserAccountDTO> updateRole(@PathVariable long id, @RequestBody UserAccountDTO userAccountDTO){
+        UserAccountDTO updatedUser = userAccountService.updateAsAdmin(id, userAccountDTO);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    @DeleteMapping("admin/users/{id}")
+    public ResponseEntity<Void> delete(@PathVariable long id){
+        userAccountService.deleteById(id);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/users/{id}")
+    public ResponseEntity<UserAccountDTO> findById(@PathVariable long id){
+        UserAccountDTO userAccount = userAccountService.findById(id);
+
+        return ResponseEntity.ok(userAccount);
     }
 
     @PutMapping("/users/{id}")
@@ -53,16 +59,10 @@ public class UserAccountRestController {
         return ResponseEntity.ok(updatedUserAccount);
     }
 
-    @PutMapping("/admin/users/{id}")
-    public ResponseEntity<UserAccountDTO> updateRole(@PathVariable long id, @RequestBody UserAccountDTO userAccountDTO){
-        UserAccountDTO updatedUser = userAccountService.updateAsAdmin(id, userAccountDTO);
-        return ResponseEntity.ok(updatedUser);
-    }
+    @PostMapping("/register")
+    public ResponseEntity<UserAccountDTO> addAsUser(@Valid @RequestBody UserAccountDTO userAccountDTO){
+        UserAccountDTO newUserAccount = userAccountService.createAsUser(userAccountDTO);
 
-    @DeleteMapping("/users/{id}")
-    public ResponseEntity<Void> delete(@PathVariable long id){
-        userAccountService.deleteById(id);
-
-        return ResponseEntity.noContent().build();
+        return new ResponseEntity<>(newUserAccount, HttpStatus.CREATED);
     }
 }
