@@ -1,4 +1,4 @@
-package com.example.storyeverything.security;
+package com.example.storyeverything.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

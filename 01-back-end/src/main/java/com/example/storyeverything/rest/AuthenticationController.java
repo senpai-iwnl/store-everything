@@ -1,5 +1,8 @@
-package com.example.storyeverything.security;
+package com.example.storyeverything.rest;
 
+import com.example.storyeverything.security.AuthenticationRequest;
+import com.example.storyeverything.security.AuthenticationResponse;
+import com.example.storyeverything.security.jwt.JwtUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
