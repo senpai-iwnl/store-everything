@@ -4,6 +4,7 @@ import com.example.storyeverything.dto.InformationDTO;
 import com.example.storyeverything.security.jwt.JwtUtil;
 import com.example.storyeverything.service.InformationService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,19 @@ public class InformationRestController {
         String login = jwtUtil.extractLogin(jwtToken);
         List<InformationDTO> information = informationService.findAllByLogin(login);
         return ResponseEntity.ok(information);
+    }
+
+    @GetMapping("/paged")
+    public ResponseEntity<Page<InformationDTO>> findAllPaged(
+            @RequestHeader("Authorization") String token,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "addDate") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+        String jwtToken = token.substring(7);
+        String username = jwtUtil.extractLogin(jwtToken);
+        Page<InformationDTO> informationPage = informationService.findAllByLoginWithPagination(username, page, size, sortBy, direction);
+        return ResponseEntity.ok(informationPage);
     }
 
 

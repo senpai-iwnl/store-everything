@@ -10,6 +10,10 @@ import com.example.storyeverything.repository.CategoryRepository;
 import com.example.storyeverything.repository.InformationRepository;
 import com.example.storyeverything.repository.UserAccountRepository;
 import com.example.storyeverything.service.InformationService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +43,18 @@ public class InformationServiceImpl implements InformationService {
                 .orElseThrow(() -> new FieldNotFoundException("UserAccount", "login", login)).getId();
         List<Information> information = informationRepository.findAllByUserAccountId(userAccountId);
         return informationMapper.toDTOList(information);
+    }
+
+    @Override
+    public Page<InformationDTO> findAllByLoginWithPagination(String login, int page, int size, String sortBy, String direction) {
+        Long userAccountId = userAccountRepository.findByLogin(login)
+                .orElseThrow(() -> new FieldNotFoundException("UserAccount", "login", login)).getId();
+
+        Sort sort = direction.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<Information> informationPage = informationRepository.findAllByUserAccountId(userAccountId, pageable);
+        return informationPage.map(informationMapper::toDTO);
     }
 
     @Override
