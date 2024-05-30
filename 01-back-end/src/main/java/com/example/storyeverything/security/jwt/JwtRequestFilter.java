@@ -45,7 +45,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             }
 
             try {
-                username = jwtUtil.extractUsername(jwt);
+                username = jwtUtil.extractLogin(jwt);
                 logger.info("JWT Token: " + jwt);
                 logger.info("Username from JWT: " + username);
             } catch (Exception e) {

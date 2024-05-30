@@ -1,6 +1,7 @@
 package com.example.storyeverything.rest;
 
 import com.example.storyeverything.dto.InformationDTO;
+import com.example.storyeverything.security.jwt.JwtUtil;
 import com.example.storyeverything.service.InformationService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -10,56 +11,54 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/information")
 public class InformationRestController {
     private final InformationService informationService;
+    private final JwtUtil jwtUtil;
 
-    public InformationRestController(InformationService informationService) {
+    public InformationRestController(InformationService informationService, JwtUtil jwtUtil) {
         this.informationService = informationService;
+        this.jwtUtil = jwtUtil;
     }
 
-    @GetMapping("/information")
-    public ResponseEntity<List<InformationDTO>> findAll(){
-        List<InformationDTO> information = informationService.findAll();
+    @GetMapping()
+    public ResponseEntity<List<InformationDTO>> findAll(@RequestHeader("Authorization") String token){
+        String jwtToken = token.substring(7);
+        String login = jwtUtil.extractLogin(jwtToken);
+        List<InformationDTO> information = informationService.findAllByLogin(login);
         return ResponseEntity.ok(information);
     }
 
-    @GetMapping("/information/users/{id}")
-    public ResponseEntity<List<InformationDTO>> findByUserId(@PathVariable long id){
-        List<InformationDTO> information = informationService.findByAccountUserId(id);
+
+    @GetMapping("/{id}")
+    public ResponseEntity<InformationDTO> findById(@PathVariable Long id, @RequestHeader("Authorization") String token) {
+        String jwtToken = token.substring(7);
+        String username = jwtUtil.extractLogin(jwtToken);
+        InformationDTO information = informationService.findByIdAndLogin(id, username);
         return ResponseEntity.ok(information);
     }
 
-    @GetMapping("/information/category/{id}")
-    public ResponseEntity<List<InformationDTO>> findByCategoryId(@PathVariable long id){
-        List<InformationDTO> information = informationService.findByCategoryId(id);
-        return ResponseEntity.ok(information);
+    @PostMapping
+    public ResponseEntity<InformationDTO> add(@RequestBody InformationDTO informationDTO, @RequestHeader("Authorization") String token) {
+        String jwtToken = token.substring(7);
+        String username = jwtUtil.extractLogin(jwtToken);
+        InformationDTO createdInformation = informationService.create(informationDTO, username);
+        return ResponseEntity.ok(createdInformation);
     }
 
-    @GetMapping("/information/{id}")
-    public ResponseEntity<InformationDTO> findById(@PathVariable long id){
-        InformationDTO information = informationService.findById(id);
-        return ResponseEntity.ok(information);
-    }
-
-    @PostMapping("/information")
-    public ResponseEntity<InformationDTO> add(@Valid @RequestBody InformationDTO informationDTO){
-        InformationDTO newInformation = informationService.create(informationDTO);
-        return new ResponseEntity<>(newInformation, HttpStatus.CREATED);
-    }
-
-    @PutMapping("/information/{id}")
-    public ResponseEntity<InformationDTO> update(@PathVariable long id,@Valid @RequestBody InformationDTO informationDTO){
-        InformationDTO updatedInformation = informationService.update(id, informationDTO);
+    @PutMapping("/{id}")
+    public ResponseEntity<InformationDTO> updateInformation(@PathVariable Long id, @RequestBody InformationDTO informationDTO, @RequestHeader("Authorization") String token) {
+        String jwtToken = token.substring(7);
+        String username = jwtUtil.extractLogin(jwtToken);
+        InformationDTO updatedInformation = informationService.update(id, informationDTO, username);
         return ResponseEntity.ok(updatedInformation);
     }
 
-    @DeleteMapping("/information/{id}")
-    public ResponseEntity<Void> delete(@PathVariable long id){
-
-
-        informationService.deleteById(id);
-
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteInformation(@PathVariable Long id, @RequestHeader("Authorization") String token) {
+        String jwtToken = token.substring(7);
+        String username = jwtUtil.extractLogin(jwtToken);
+        informationService.delete(id, username);
         return ResponseEntity.noContent().build();
     }
 }

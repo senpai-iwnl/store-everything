@@ -1,20 +1,16 @@
 package com.example.storyeverything.mapper;
 
 import com.example.storyeverything.dto.InformationDTO;
-import com.example.storyeverything.exception.FieldNotFoundException;
 import com.example.storyeverything.model.Category;
 import com.example.storyeverything.model.Information;
 import com.example.storyeverything.repository.CategoryRepository;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = {InformationMapper.CategoryResolver.class}, unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring", uses = {}, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface InformationMapper {
 
     @Mapping(source = "category.name", target = "categoryName")
@@ -25,32 +21,22 @@ public interface InformationMapper {
     @Mapping(source = "userAccount.id", target = "userAccountId")
     List<InformationDTO> toDTOList(List<Information> information);
 
-    @Mapping(target = "category", source = "categoryName")
+    @Mapping(target = "category", source = "categoryName", qualifiedByName = "mapCategoryNameToCategory")
     @Mapping(source = "userAccountId", target = "userAccount.id")
-    Information toEntity(InformationDTO informationDTO);
+    Information toEntity(InformationDTO informationDTO, @Context CategoryRepository categoryRepository);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "addDate", ignore = true)
-    void updateInformationFromDTO(InformationDTO dto, @MappingTarget Information information);
+    @Mapping(target = "category", expression = "java(mapCategoryNameToCategory(dto.getCategoryName(), categoryRepository))")
+    void updateInformationFromDTO(InformationDTO dto, @MappingTarget Information information, @Context CategoryRepository categoryRepository);
 
-    // Component to resolve a Category entity from a category name
-    @Component
-    class CategoryResolver {
-        @Autowired
-        private CategoryRepository categoryRepository;
+    @Named("mapCategoryNameToCategory")
+    default Category mapCategoryNameToCategory(String categoryName, @Context CategoryRepository categoryRepository) {
+        return categoryRepository.findByName(categoryName)
+                .orElseThrow(() -> new IllegalArgumentException("Category not found: " + categoryName));
+    }
 
-        // Method to resolve a Category entity from a category name
-        public Category categoryFromName(String name) {
-            if (name == null) {
-                return null;
-            }
-            return categoryRepository.findByName(name)
-                    .orElseThrow(() -> new FieldNotFoundException("Category", "name", name));
-        }
-
-        // Method to extract category name from a Category entity
-        public String nameFromCategory(Category category) {
-            return category == null ? null : category.getName();
-        }
+    default String mapCategoryToCategoryName(Category category) {
+        return category.getName();
     }
 }

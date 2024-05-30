@@ -135,6 +135,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
+    @Transactional
     public void deleteById(long id) {
         if(userAccountRepository.findById(id).isEmpty())
             throw new FieldNotFoundException("UserAccount", "id", id);
