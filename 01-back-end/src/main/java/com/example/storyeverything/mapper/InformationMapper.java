@@ -10,40 +10,47 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = {}, unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public abstract class InformationMapper {
-
-    @Autowired
-    protected CategoryRepository categoryRepository;
+@Mapper(componentModel = "spring", uses = {InformationMapper.CategoryResolver.class}, unmappedTargetPolicy = ReportingPolicy.IGNORE)
+public interface InformationMapper {
 
     @Mapping(source = "category.name", target = "categoryName")
     @Mapping(source = "userAccount.id", target = "userAccountId")
-    public abstract InformationDTO toDTO(Information information);
+    InformationDTO toDTO(Information information);
+
     @Mapping(source = "category.name", target = "categoryName")
     @Mapping(source = "userAccount.id", target = "userAccountId")
-    public abstract List<InformationDTO> toDTOList(List<Information> information);
+    List<InformationDTO> toDTOList(List<Information> information);
 
     @Mapping(target = "category", source = "categoryName")
     @Mapping(source = "userAccountId", target = "userAccount.id")
-    public abstract Information toEntity(InformationDTO informationDTO);
+    Information toEntity(InformationDTO informationDTO);
+
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "addDate", ignore = true)
-    public abstract void updateInformationFromDTO(InformationDTO dto, @MappingTarget Information information);
+    void updateInformationFromDTO(InformationDTO dto, @MappingTarget Information information);
 
-    // Method to resolve a Category entity from a category name
-    protected Category categoryFromName(String name) {
-        if (name == null) {
-            return null;
+    // Component to resolve a Category entity from a category name
+    @Component
+    class CategoryResolver {
+        @Autowired
+        private CategoryRepository categoryRepository;
+
+        // Method to resolve a Category entity from a category name
+        public Category categoryFromName(String name) {
+            if (name == null) {
+                return null;
+            }
+            return categoryRepository.findByName(name)
+                    .orElseThrow(() -> new FieldNotFoundException("Category", "name", name));
         }
-        return categoryRepository.findByName(name)
-                .orElseThrow(() -> new FieldNotFoundException("Category", "name", name));
-    }
 
-    // Method to extract category name from a Category entity
-    protected String nameFromCategory(Category category) {
-        return category == null ? null : category.getName();
+        // Method to extract category name from a Category entity
+        public String nameFromCategory(Category category) {
+            return category == null ? null : category.getName();
+        }
     }
 }

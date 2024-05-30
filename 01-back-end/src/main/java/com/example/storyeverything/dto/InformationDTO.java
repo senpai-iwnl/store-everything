@@ -1,6 +1,7 @@
 package com.example.storyeverything.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class InformationDTO {
     private long id;
@@ -8,22 +9,26 @@ public class InformationDTO {
     private String content;
     private String link;
     private LocalDate addDate;
+    private LocalDateTime remainder;
+    private boolean isPublic;
     private String categoryName;
     private long userAccountId;
 
     public InformationDTO() {
     }
 
-    public InformationDTO(long id, String title, String content, String link, LocalDate addDate, String categoryName, long userAccountId) {
+    public InformationDTO(long id, String title, String content, String link, LocalDate addDate, LocalDateTime remainder, boolean isPublic, String categoryName, long userAccountId) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.link = link;
         this.addDate = addDate;
+        this.remainder = remainder;
+        this.isPublic = isPublic;
         this.categoryName = categoryName;
         this.userAccountId = userAccountId;
     }
-
+    
     public long getId() {
         return id;
     }
@@ -62,6 +67,22 @@ public class InformationDTO {
 
     public void setAddDate(LocalDate addDate) {
         this.addDate = addDate;
+    }
+
+    public LocalDateTime getRemainder() {
+        return remainder;
+    }
+
+    public void setRemainder(LocalDateTime remainder) {
+        this.remainder = remainder;
+    }
+
+    public boolean getIsPublic() {
+        return isPublic;
+    }
+
+    public void setIsPublic(boolean isPublic) {
+        this.isPublic = isPublic;
     }
 
     public String getCategoryName() {
