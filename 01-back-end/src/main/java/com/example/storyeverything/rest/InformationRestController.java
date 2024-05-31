@@ -3,9 +3,7 @@ package com.example.storyeverything.rest;
 import com.example.storyeverything.dto.InformationDTO;
 import com.example.storyeverything.security.jwt.JwtUtil;
 import com.example.storyeverything.service.InformationService;
-import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +24,7 @@ public class InformationRestController {
     public ResponseEntity<List<InformationDTO>> findAll(@RequestHeader("Authorization") String token){
         String jwtToken = token.substring(7);
         String login = jwtUtil.extractLogin(jwtToken);
-        List<InformationDTO> information = informationService.findAllByLogin(login);
+        List<InformationDTO> information = informationService.findAll(login);
         return ResponseEntity.ok(information);
     }
 
@@ -39,7 +37,7 @@ public class InformationRestController {
             @RequestParam(defaultValue = "asc") String direction) {
         String jwtToken = token.substring(7);
         String username = jwtUtil.extractLogin(jwtToken);
-        Page<InformationDTO> informationPage = informationService.findAllByLoginWithPagination(username, page, size, sortBy, direction);
+        Page<InformationDTO> informationPage = informationService.findAllWithPagination(username, page, size, sortBy, direction);
         return ResponseEntity.ok(informationPage);
     }
 
@@ -48,7 +46,7 @@ public class InformationRestController {
     public ResponseEntity<InformationDTO> findById(@PathVariable Long id, @RequestHeader("Authorization") String token) {
         String jwtToken = token.substring(7);
         String username = jwtUtil.extractLogin(jwtToken);
-        InformationDTO information = informationService.findByIdAndLogin(id, username);
+        InformationDTO information = informationService.findById(id, username);
         return ResponseEntity.ok(information);
     }
 

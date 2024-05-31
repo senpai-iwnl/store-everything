@@ -7,8 +7,10 @@ import com.example.storyeverything.mapper.InformationMapper;
 import com.example.storyeverything.model.Category;
 import com.example.storyeverything.model.Information;
 import com.example.storyeverything.model.UserAccount;
+import com.example.storyeverything.model.UserAccountInformation;
 import com.example.storyeverything.repository.CategoryRepository;
 import com.example.storyeverything.repository.InformationRepository;
+import com.example.storyeverything.repository.UserAccountInformationRepository;
 import com.example.storyeverything.repository.UserAccountRepository;
 import com.example.storyeverything.service.InformationService;
 import org.springframework.data.domain.Page;
@@ -18,8 +20,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class InformationServiceImpl implements InformationService {
@@ -27,84 +30,101 @@ public class InformationServiceImpl implements InformationService {
     private final InformationMapper informationMapper;
     private final UserAccountRepository userAccountRepository;
     private final CategoryRepository categoryRepository;
+    private final UserAccountInformationRepository userAccountInformationRepository;
 
     public InformationServiceImpl(InformationRepository informationRepository,
                                   InformationMapper informationMapper,
                                   UserAccountRepository userAccountRepository,
-                                  CategoryRepository categoryRepository) {
+                                  CategoryRepository categoryRepository,
+                                  UserAccountInformationRepository userAccountInformationRepository) {
         this.informationRepository = informationRepository;
         this.informationMapper = informationMapper;
         this.userAccountRepository = userAccountRepository;
         this.categoryRepository = categoryRepository;
+        this.userAccountInformationRepository = userAccountInformationRepository;
     }
 
     @Override
-    public List<InformationDTO> findAllByLogin(String login) {
-        Long userAccountId = userAccountRepository.findByLogin(login)
-                .orElseThrow(() -> new FieldNotFoundException("UserAccount", "login", login)).getId();
-        List<Information> information = informationRepository.findAllByUserAccountId(userAccountId);
+    public List<InformationDTO> findAll(String login) {
+        UserAccount userAccount = userAccountRepository.findByLogin(login)
+                .orElseThrow(() -> new FieldNotFoundException("UserAccount", "login", login));
+        List<Information> information = informationRepository.findAllByUserAccountsContains(userAccount);
         return informationMapper.toDTOList(information);
     }
 
     @Override
-    public Page<InformationDTO> findAllByLoginWithPagination(String login, int page, int size, String sortBy, String direction) {
-        Long userAccountId = userAccountRepository.findByLogin(login)
-                .orElseThrow(() -> new FieldNotFoundException("UserAccount", "login", login)).getId();
+    public Page<InformationDTO> findAllWithPagination(String login, int page, int size, String sortBy, String direction) {
+        UserAccount userAccount = userAccountRepository.findByLogin(login)
+                .orElseThrow(() -> new FieldNotFoundException("UserAccount", "login", login));
 
         Sort sort = direction.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        Page<Information> informationPage = informationRepository.findAllByUserAccountId(userAccountId, pageable);
+        Page<Information> informationPage = informationRepository.findAllByUserAccountsContains(userAccount, pageable);
         return informationPage.map(informationMapper::toDTO);
     }
 
     @Override
-    public InformationDTO findByIdAndLogin(Long id, String login) {
+    public InformationDTO findById(Long id, String login) {
         Information information = informationRepository.findById(id)
                 .orElseThrow(() -> new FieldNotFoundException("Information", "id", id.toString()));
-        Long userAccountId = userAccountRepository.findByLogin(login)
-                .orElseThrow(() -> new FieldNotFoundException("UserAccount", "login", login)).getId();
+        UserAccount userAccount = userAccountRepository.findByLogin(login)
+                .orElseThrow(() -> new FieldNotFoundException("UserAccount", "login", login));
 
-        if(information.getPublic()){
-            return informationMapper.toDTO(information);
-        } else if (informationRepository.findByIdAndUserAccountId(id, userAccountId).isPresent()) {
+        boolean isAssociated = userAccountInformationRepository.findByUserAccountAndInformation(userAccount, information).isPresent();
+
+        if (information.getPublic() || isAssociated) {
             return informationMapper.toDTO(information);
         } else {
             throw new InformationAccessDeniedException(login, id.toString());
         }
     }
 
+
     @Override
     public InformationDTO create(InformationDTO informationDTO, String login) {
         UserAccount userAccount = userAccountRepository.findByLogin(login)
                 .orElseThrow(() -> new FieldNotFoundException("UserAccount", "login", login));
 
-        Information information = informationMapper.toEntity(informationDTO, categoryRepository);
+        Information information = informationMapper.toEntity(informationDTO, categoryRepository, userAccountRepository);
         Category category = categoryRepository.findByName(informationDTO.getCategoryName())
                 .orElseThrow(() -> new FieldNotFoundException("Category", "name", informationDTO.getCategoryName()));
 
         information.setCategory(category);
-        information.setUserAccount(userAccount);
+        Set<UserAccount> userAccounts = new HashSet<>();
+        userAccounts.add(userAccount);
+        information.setUserAccounts(userAccounts);
 
         Information savedInformation = informationRepository.save(information);
+
+        UserAccountInformation userAccountInformation = new UserAccountInformation(userAccount, savedInformation, true);
+        userAccountInformationRepository.save(userAccountInformation);
+
         return informationMapper.toDTO(savedInformation);
     }
 
     @Override
     @Transactional
     public InformationDTO update(Long id, InformationDTO informationDTO, String login) {
-        Long userAccountId = userAccountRepository.findByLogin(login)
-                .orElseThrow(() -> new FieldNotFoundException("UserAccount", "login", login)).getId();
-        Information existingInformation = informationRepository.findByIdAndUserAccountId(id, userAccountId)
-                .orElseThrow(() -> new FieldNotFoundException("Information", "id", id.toString()));
+        UserAccount userAccount = userAccountRepository.findByLogin(login)
+                .orElseThrow(() -> new FieldNotFoundException("UserAccount", "login", login));
+
+        UserAccountInformation userAccountInformation = userAccountInformationRepository.findByUserAccountAndInformation(userAccount, informationRepository.findById(id)
+                        .orElseThrow(() -> new FieldNotFoundException("Information", "id", id.toString())))
+                .orElseThrow(() -> new InformationAccessDeniedException(login, id.toString()));
+
+        if (!userAccountInformation.isOwner()) {
+            throw new InformationAccessDeniedException(login, id.toString());
+        }
+
+        Information existingInformation = userAccountInformation.getInformation();
 
         Category category = categoryRepository.findByName(informationDTO.getCategoryName())
                 .orElseThrow(() -> new FieldNotFoundException("Category", "name", informationDTO.getCategoryName()));
 
         existingInformation.setCategory(category);
 
-        informationMapper.updateInformationFromDTO(informationDTO, existingInformation, categoryRepository);
-
+        informationMapper.updateInformationFromDTO(informationDTO, existingInformation, categoryRepository, userAccountRepository);
 
         Information updatedInformation = informationRepository.save(existingInformation);
         return informationMapper.toDTO(updatedInformation);
@@ -113,11 +133,19 @@ public class InformationServiceImpl implements InformationService {
     @Override
     @Transactional
     public void delete(Long id, String login) {
-        Long userAccountId = userAccountRepository.findByLogin(login)
-                .orElseThrow(() -> new FieldNotFoundException("UserAccount", "login", login)).getId();
+        UserAccount userAccount = userAccountRepository.findByLogin(login)
+                .orElseThrow(() -> new FieldNotFoundException("UserAccount", "login", login));
 
-        Information existingInformation = informationRepository.findByIdAndUserAccountId(id, userAccountId)
-                .orElseThrow(() -> new FieldNotFoundException("Information", "id", id.toString()));
+        // Check if the user is the owner
+        UserAccountInformation userAccountInformation = userAccountInformationRepository.findByUserAccountAndInformation(userAccount, informationRepository.findById(id)
+                        .orElseThrow(() -> new FieldNotFoundException("Information", "id", id.toString())))
+                .orElseThrow(() -> new InformationAccessDeniedException(login, id.toString()));
+
+        if (!userAccountInformation.isOwner()) {
+            throw new InformationAccessDeniedException(login, id.toString());
+        }
+
+        Information existingInformation = userAccountInformation.getInformation();
 
         informationRepository.delete(existingInformation);
     }

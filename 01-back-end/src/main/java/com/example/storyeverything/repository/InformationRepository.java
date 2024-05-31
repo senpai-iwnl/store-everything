@@ -13,8 +13,6 @@ import java.util.Optional;
 
 @Repository
 public interface InformationRepository extends JpaRepository<Information, Long> {
-    List<Information> findAllByUserAccountId(Long id);
-    Optional<Information> findByIdAndUserAccountId(Long id, Long userAccountId);
-    Page<Information> findAllByUserAccountId(Long userAccountId, Pageable pageable);
-
+    List<Information>  findAllByUserAccountsContains(UserAccount userAccount);
+    Page<Information>  findAllByUserAccountsContains(UserAccount userAccount, Pageable pageable);
 }

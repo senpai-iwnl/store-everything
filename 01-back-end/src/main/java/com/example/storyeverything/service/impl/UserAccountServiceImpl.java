@@ -6,6 +6,7 @@ import com.example.storyeverything.exception.FieldNotFoundException;
 import com.example.storyeverything.mapper.UserAccountMapper;
 import com.example.storyeverything.model.Role;
 import com.example.storyeverything.model.UserAccount;
+import com.example.storyeverything.repository.InformationRepository;
 import com.example.storyeverything.repository.RoleRepository;
 import com.example.storyeverything.repository.UserAccountRepository;
 import com.example.storyeverything.service.UserAccountService;
@@ -22,15 +23,18 @@ public class UserAccountServiceImpl implements UserAccountService {
     private final RoleRepository roleRepository;
     private final UserAccountMapper userAccountMapper;
     private final PasswordEncoder passwordEncoder;
+    private final InformationRepository informationRepository;
 
     public UserAccountServiceImpl(UserAccountRepository userAccountRepository,
                                   UserAccountMapper userAccountMapper,
                                   RoleRepository roleRepository,
-                                  PasswordEncoder passwordEncoder) {
+                                  PasswordEncoder passwordEncoder,
+                                  InformationRepository informationRepository) {
         this.userAccountRepository = userAccountRepository;
         this.userAccountMapper = userAccountMapper;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.informationRepository = informationRepository;
     }
 
     @Override
@@ -58,7 +62,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
         userAccountDTO.setPassword(encodingPassword(userAccountDTO.getPassword()));
 
-        UserAccount userAccount = userAccountMapper.toEntity(userAccountDTO, roleRepository);
+        UserAccount userAccount = userAccountMapper.toEntity(userAccountDTO, roleRepository, informationRepository);
 
         Role userRole = roleRepository.findByName("ROLE_LIMITED_USER")
                 .orElseThrow(() -> new FieldNotFoundException("Role", "name", "ROLE_LIMITED_USER"));
@@ -75,7 +79,7 @@ public class UserAccountServiceImpl implements UserAccountService {
             throw new DuplicateLoginException("Login is already in use");
         }
 
-        UserAccount userAccount = userAccountMapper.toEntity(userAccountDTO, roleRepository);
+        UserAccount userAccount = userAccountMapper.toEntity(userAccountDTO, roleRepository, informationRepository);
         // default user role
         Role newRole = roleRepository.findByName(userAccountDTO.getRole())
                 .orElseThrow(() -> new FieldNotFoundException("Role", "id", userAccountDTO.getRole()));
@@ -129,7 +133,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         userAccount.setRole(newRole);
 
 
-        userAccountMapper.updateUserAccountFromDTOAsAdmin(userAccountDTO, userAccount, roleRepository);
+        userAccountMapper.updateUserAccountFromDTOAsAdmin(userAccountDTO, userAccount, roleRepository, informationRepository);
 
         return userAccountMapper.toDTO(userAccount);
     }

@@ -27,8 +27,19 @@ CREATE TABLE information (
     add_date DATE NOT NULL DEFAULT CURRENT_DATE,
     category_id INTEGER NOT NULL,
     user_account_id INTEGER NOT NULL,
+    remainder TIMESTAMP DEFAULT (CURRENT_TIMESTAMP + interval '1 day'),
+    is_public BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (category_id) REFERENCES category(id),
     FOREIGN KEY (user_account_id) REFERENCES user_account(id)
+);
+
+CREATE TABLE user_account_information (
+    user_account_id INTEGER NOT NULL,
+    information_id INTEGER NOT NULL,
+    owner BOOLEAN NOT NULL DEFAULT FALSE,
+    PRIMARY KEY (user_account_id, information_id),
+    FOREIGN KEY (user_account_id) REFERENCES user_account(id),
+    FOREIGN KEY (information_id) REFERENCES information(id)
 );
 
 INSERT INTO role (name) VALUES 
@@ -36,6 +47,7 @@ INSERT INTO role (name) VALUES
 ('ROLE_LIMITED_USER'), 
 ('ROLE_FULL_USER'), 
 ('ROLE_GUEST');
+
 INSERT INTO category (name) VALUES
 ('personal info'),
 ('financial info'),

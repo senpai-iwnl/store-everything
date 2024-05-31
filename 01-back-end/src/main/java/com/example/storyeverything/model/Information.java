@@ -1,44 +1,53 @@
 package com.example.storyeverything.model;
 
 import jakarta.persistence.*;
-
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity(name = "information")
-
 public class Information {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
+
     @NotNull
     @Column(name = "title", nullable = false)
     @Size(min = 3, max = 20, message = "The field must contain between 3 to 20 characters.")
     private String title;
+
     @NotNull
     @Column(name = "content", nullable = false, columnDefinition = "TEXT")
     @Size(min = 5, max = 500, message = "The field must contain between 5 to 500 characters.")
     private String content;
+
     @Column(name = "link", columnDefinition = "TEXT")
     private String link;
+
     @NotNull
     @Column(name = "add_date", nullable = false)
-    @Temporal(TemporalType.DATE)
     private LocalDate addDate;
+
     @Column(name = "remainder", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP + interval '1 day'")
     private LocalDateTime remainder;
+
     @Column(name = "is_public", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean isPublic = false;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_account_id", nullable = false)
-    private UserAccount userAccount;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "user_account_information",
+            joinColumns = @JoinColumn(name = "information_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_account_id")
+    )
+    private Set<UserAccount> userAccounts = new HashSet<>();
 
     @PrePersist
     public void prePersist() {
@@ -60,11 +69,11 @@ public class Information {
         this.link = link;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -124,11 +133,11 @@ public class Information {
         this.category = category;
     }
 
-    public UserAccount getUserAccount() {
-        return userAccount;
+    public Set<UserAccount> getUserAccounts() {
+        return userAccounts;
     }
 
-    public void setUserAccount(UserAccount userAccount) {
-        this.userAccount = userAccount;
+    public void setUserAccounts(Set<UserAccount> userAccounts) {
+        this.userAccounts = userAccounts;
     }
 }
