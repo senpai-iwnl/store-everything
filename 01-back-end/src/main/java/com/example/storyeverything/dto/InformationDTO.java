@@ -1,5 +1,7 @@
 package com.example.storyeverything.dto;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -42,6 +44,8 @@ public class InformationDTO {
         return title;
     }
 
+
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -78,12 +82,12 @@ public class InformationDTO {
         this.remainder = remainder;
     }
 
-    public boolean getIsPublic() {
+    public boolean isPublic() {
         return isPublic;
     }
 
-    public void setIsPublic(boolean isPublic) {
-        this.isPublic = isPublic;
+    public void setPublic(boolean aPublic) {
+        isPublic = aPublic;
     }
 
     public String getCategoryName() {

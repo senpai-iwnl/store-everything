@@ -26,11 +26,9 @@ CREATE TABLE information (
     link TEXT,
     add_date DATE NOT NULL DEFAULT CURRENT_DATE,
     category_id INTEGER NOT NULL,
-    user_account_id INTEGER NOT NULL,
     remainder TIMESTAMP DEFAULT (CURRENT_TIMESTAMP + interval '1 day'),
     is_public BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (category_id) REFERENCES category(id),
-    FOREIGN KEY (user_account_id) REFERENCES user_account(id)
 );
 
 CREATE TABLE user_account_information (

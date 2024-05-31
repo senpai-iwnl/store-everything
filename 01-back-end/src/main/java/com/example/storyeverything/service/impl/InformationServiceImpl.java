@@ -136,17 +136,24 @@ public class InformationServiceImpl implements InformationService {
         UserAccount userAccount = userAccountRepository.findByLogin(login)
                 .orElseThrow(() -> new FieldNotFoundException("UserAccount", "login", login));
 
-        // Check if the user is the owner
-        UserAccountInformation userAccountInformation = userAccountInformationRepository.findByUserAccountAndInformation(userAccount, informationRepository.findById(id)
-                        .orElseThrow(() -> new FieldNotFoundException("Information", "id", id.toString())))
+        Information information = informationRepository.findById(id)
+                .orElseThrow(() -> new FieldNotFoundException("Information", "id", id.toString()));
+
+        UserAccountInformation userAccountInformation = userAccountInformationRepository.findByUserAccountAndInformation(userAccount, information)
                 .orElseThrow(() -> new InformationAccessDeniedException(login, id.toString()));
 
         if (!userAccountInformation.isOwner()) {
             throw new InformationAccessDeniedException(login, id.toString());
         }
 
-        Information existingInformation = userAccountInformation.getInformation();
+        // Remove the relationships from user_account_information
+        userAccountInformationRepository.delete(userAccountInformation);
 
-        informationRepository.delete(existingInformation);
+        // Check if there are any other relationships for this information
+        List<UserAccountInformation> remainingRelationships = userAccountInformationRepository.findByInformation(information);
+        if (remainingRelationships.isEmpty()) {
+            // If no other relationships, delete the information
+            informationRepository.delete(information);
+        }
     }
 }

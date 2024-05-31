@@ -24,7 +24,8 @@ public interface InformationMapper {
     List<InformationDTO> toDTOList(List<Information> informationList);
 
     @Mapping(target = "category", source = "categoryName", qualifiedByName = "mapCategoryNameToCategory")
-    @Mapping(source = "userAccountIds", target = "userAccounts", qualifiedByName = "mapIdsToUserAccounts")
+    @Mapping(target = "public", source = "public")
+    @Mapping(target = "userAccounts", ignore = true)
     Information toEntity(InformationDTO informationDTO, @Context CategoryRepository categoryRepository, @Context UserAccountRepository userAccountRepository);
 
     @Mapping(target = "id", ignore = true)
