@@ -60,11 +60,18 @@ public class InformationServiceImpl implements InformationService {
 
     @Override
     public InformationDTO findByIdAndLogin(Long id, String login) {
+        Information information = informationRepository.findById(id)
+                .orElseThrow(() -> new FieldNotFoundException("Information", "id", id.toString()));
         Long userAccountId = userAccountRepository.findByLogin(login)
                 .orElseThrow(() -> new FieldNotFoundException("UserAccount", "login", login)).getId();
-        Information information = informationRepository.findByIdAndUserAccountId(id, userAccountId)
-                .orElseThrow(() -> new InformationAccessDeniedException(login, id.toString()));
-        return informationMapper.toDTO(information);
+
+        if(information.getPublic()){
+            return informationMapper.toDTO(information);
+        } else if (informationRepository.findByIdAndUserAccountId(id, userAccountId).isPresent()) {
+            return informationMapper.toDTO(information);
+        } else {
+            throw new InformationAccessDeniedException(login, id.toString());
+        }
     }
 
     @Override
