@@ -2,6 +2,7 @@ package com.example.storyeverything.service.impl;
 
 import com.example.storyeverything.dto.InformationDTO;
 import com.example.storyeverything.exception.FieldNotFoundException;
+import com.example.storyeverything.exception.InformationAccessDeniedException;
 import com.example.storyeverything.mapper.InformationMapper;
 import com.example.storyeverything.model.Category;
 import com.example.storyeverything.model.Information;
@@ -62,10 +63,11 @@ public class InformationServiceImpl implements InformationService {
         Long userAccountId = userAccountRepository.findByLogin(login)
                 .orElseThrow(() -> new FieldNotFoundException("UserAccount", "login", login)).getId();
         Information information = informationRepository.findByIdAndUserAccountId(id, userAccountId)
-                .orElseThrow(() -> new FieldNotFoundException("Information", "id", id.toString()));
+                .orElseThrow(() -> new InformationAccessDeniedException(login, id.toString()));
         return informationMapper.toDTO(information);
     }
 
+    @Override
     public InformationDTO create(InformationDTO informationDTO, String login) {
         UserAccount userAccount = userAccountRepository.findByLogin(login)
                 .orElseThrow(() -> new FieldNotFoundException("UserAccount", "login", login));

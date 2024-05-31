@@ -2,6 +2,7 @@ package com.example.storyeverything.handler;
 
 import com.example.storyeverything.exception.DuplicateLoginException;
 import com.example.storyeverything.exception.FieldNotFoundException;
+import com.example.storyeverything.exception.InformationAccessDeniedException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,12 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(FieldNotFoundException.class)
-    public ResponseEntity<?> handleUserNotFoundException(FieldNotFoundException e) {
+    public ResponseEntity<?> handleFieldNotNotFoundException(FieldNotFoundException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InformationAccessDeniedException.class)
+    public ResponseEntity<?> handleInformationAccessDeniedException(InformationAccessDeniedException e){
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 }

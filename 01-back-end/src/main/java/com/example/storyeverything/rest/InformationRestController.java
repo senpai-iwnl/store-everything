@@ -35,7 +35,7 @@ public class InformationRestController {
             @RequestHeader("Authorization") String token,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "addDate") String sortBy,
+            @RequestParam(defaultValue = "title") String sortBy,
             @RequestParam(defaultValue = "asc") String direction) {
         String jwtToken = token.substring(7);
         String username = jwtUtil.extractLogin(jwtToken);
