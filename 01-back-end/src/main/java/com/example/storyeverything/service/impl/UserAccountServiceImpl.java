@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -53,6 +54,14 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
+    public UserAccountDTO findByToken(String login) {
+        UserAccount userAccount = userAccountRepository.findByLogin(login)
+                .orElseThrow(() -> new FieldNotFoundException("UserAccount", "login", login));
+
+        return userAccountMapper.toDTO(userAccount);
+    }
+
+    @Override
     public UserAccountDTO createAsUser(UserAccountDTO userAccountDTO) {
         if (!isLoginAvailable(userAccountDTO.getLogin())) {
             throw new DuplicateLoginException("Login is already in use");
@@ -83,6 +92,9 @@ public class UserAccountServiceImpl implements UserAccountService {
         // default user role
         Role newRole = roleRepository.findByName(userAccountDTO.getRole())
                 .orElseThrow(() -> new FieldNotFoundException("Role", "id", userAccountDTO.getRole()));
+
+        userAccountDTO.setPassword(encodingPassword(userAccountDTO.getPassword()));
+
 
         userAccount.setRole(newRole);
         userAccount = userAccountRepository.save(userAccount);

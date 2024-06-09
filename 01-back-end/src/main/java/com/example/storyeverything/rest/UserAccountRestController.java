@@ -1,6 +1,8 @@
 package com.example.storyeverything.rest;
 
+import com.example.storyeverything.dto.InformationDTO;
 import com.example.storyeverything.dto.UserAccountDTO;
+import com.example.storyeverything.security.jwt.JwtUtil;
 import com.example.storyeverything.service.UserAccountService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -13,9 +15,11 @@ import java.util.List;
 @RequestMapping("/api")
 public class UserAccountRestController {
     private final UserAccountService userAccountService;
+    private final JwtUtil jwtUtil;
 
-    public UserAccountRestController(UserAccountService userAccountService) {
+    public UserAccountRestController(UserAccountService userAccountService, JwtUtil jwtUtil) {
         this.userAccountService = userAccountService;
+        this.jwtUtil = jwtUtil;
     }
 
     @GetMapping("/admin/users")
@@ -64,5 +68,13 @@ public class UserAccountRestController {
         UserAccountDTO newUserAccount = userAccountService.createAsUser(userAccountDTO);
 
         return new ResponseEntity<>(newUserAccount, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/users/token")
+    public ResponseEntity<UserAccountDTO> findByToken(@RequestHeader("Authorization") String token){
+        String jwtToken = token.substring(7);
+        String login = jwtUtil.extractLogin(jwtToken);
+        UserAccountDTO user = userAccountService.findByToken(login);
+        return ResponseEntity.ok(user);
     }
 }

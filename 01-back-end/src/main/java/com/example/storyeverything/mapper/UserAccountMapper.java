@@ -9,6 +9,7 @@ import com.example.storyeverything.repository.RoleRepository;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -52,8 +53,9 @@ public interface UserAccountMapper {
 
     @Named("mapIdsToInformation")
     default Set<Information> mapIdsToInformation(Set<Long> ids, @Context InformationRepository informationRepository) {
+        if (ids == null) return Collections.emptySet();
         return ids.stream()
-                .map(id -> informationRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Information not found: " + id)))
+                .map(id -> informationRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Information not d: " + id)))
                 .collect(Collectors.toSet());
     }
 
