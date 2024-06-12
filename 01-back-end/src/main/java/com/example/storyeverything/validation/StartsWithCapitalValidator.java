@@ -1,8 +1,8 @@
 package com.example.storyeverything.validation;
 
 import com.example.storyeverything.annotation.StartsWithCapital;
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
 public class StartsWithCapitalValidator implements ConstraintValidator<StartsWithCapital, String> {
 

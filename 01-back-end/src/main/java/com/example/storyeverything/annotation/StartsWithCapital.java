@@ -6,8 +6,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 import com.example.storyeverything.validation.StartsWithCapitalValidator;
-import jakarta.validation.Constraint;
-import jakarta.validation.Payload;
+import javax.validation.Constraint;
+import javax.validation.Payload;
 
 @Target({ FIELD })
 @Retention(RUNTIME)

@@ -4,7 +4,7 @@ import com.example.storyeverything.dto.InformationDTO;
 import com.example.storyeverything.dto.UserAccountDTO;
 import com.example.storyeverything.security.jwt.JwtUtil;
 import com.example.storyeverything.service.UserAccountService;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

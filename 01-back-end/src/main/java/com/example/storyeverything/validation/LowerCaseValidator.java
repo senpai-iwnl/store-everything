@@ -1,8 +1,8 @@
 package com.example.storyeverything.validation;
 
 import com.example.storyeverything.annotation.LowerCase;
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
 public class LowerCaseValidator implements ConstraintValidator<LowerCase, String> {
 

@@ -2,7 +2,7 @@ package com.example.storyeverything.rest;
 
 import com.example.storyeverything.dto.CategoryDTO;
 import com.example.storyeverything.service.CategoryService;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

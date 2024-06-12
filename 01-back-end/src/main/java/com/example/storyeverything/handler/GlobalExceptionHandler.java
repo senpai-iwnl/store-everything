@@ -3,7 +3,7 @@ package com.example.storyeverything.handler;
 import com.example.storyeverything.exception.DuplicateLoginException;
 import com.example.storyeverything.exception.FieldNotFoundException;
 import com.example.storyeverything.exception.InformationAccessDeniedException;
-import jakarta.validation.ConstraintViolationException;
+import javax.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

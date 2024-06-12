@@ -7,8 +7,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 import com.example.storyeverything.validation.LowerCaseValidator;
-import jakarta.validation.Constraint;
-import jakarta.validation.Payload;
+import javax.validation.Constraint;
+import javax.validation.Payload;
 
 @Documented
 @Constraint(validatedBy = LowerCaseValidator.class)

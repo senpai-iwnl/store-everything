@@ -1,6 +1,6 @@
 package com.example.storyeverything.model;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 @Entity(name = "user_account_information")
 public class UserAccountInformation {
