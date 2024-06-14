@@ -67,15 +67,12 @@ public class UserAccountServiceImpl implements UserAccountService {
             throw new DuplicateLoginException("Login is already in use");
         }
 
-        userAccountDTO.setRole("LIMITED_USER");
-
         userAccountDTO.setPassword(encodingPassword(userAccountDTO.getPassword()));
+
+        userAccountDTO.setRole("ROLE_LIMITED_USER");
 
         UserAccount userAccount = userAccountMapper.toEntity(userAccountDTO, roleRepository, informationRepository);
 
-        Role userRole = roleRepository.findByName("ROLE_LIMITED_USER")
-                .orElseThrow(() -> new FieldNotFoundException("Role", "name", "ROLE_LIMITED_USER"));
-        userAccount.setRole(userRole);
 
         userAccount = userAccountRepository.save(userAccount);
 

@@ -24,8 +24,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests((requests) -> requests
                         .antMatchers("/api/authenticate", "/api/logout", "/api/register").permitAll()
                         .antMatchers("/api/admin/**").hasRole("ADMIN")
+                        .antMatchers("/api/token").hasAnyRole("UNLIMITED_USER", "LIMITED_USER", "ADMIN")
                         .antMatchers(HttpMethod.GET, "/api/information/**", "/api/category/**").hasAnyRole("UNLIMITED_USER", "LIMITED_USER")
                         .antMatchers("/api/information/**", "/api/category/**").hasRole("UNLIMITED_USER")
+                        .antMatchers("/api/user/**").hasAnyRole("UNLIMITED_USER", "LIMITED_USER")
+                        .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
