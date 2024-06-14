@@ -8,49 +8,62 @@ import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * UserAccount is an entity class that represents a user account in the application.
+ * It includes details like first name, last name, login, password, age, and role.
+ */
 @Entity(name = "user_account")
 public class UserAccount {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // First name of the user. It must start with a capital letter and contain between 3 to 20 characters.
     @NotNull
     @Column(name = "first_name", nullable = false)
     @Size(min = 3, max = 20, message = "The field must contain between 3 to 20 characters.")
     @StartsWithCapital
     private String firstName;
 
+    // Last name of the user. It must start with a capital letter and contain between 3 to 50 characters.
     @NotNull
     @Column(name = "last_name", nullable = false)
     @Size(min = 3, max = 50, message = "The field must contain between 3 to 50 characters.")
     @StartsWithCapital
     private String lastName;
 
+    // Login of the user. It must contain between 3 to 20 characters.
     @NotNull
     @Column(name = "login", nullable = false, unique = true)
     @Size(min = 3, max = 20, message = "The field must contain between 3 to 20 characters.")
     private String login;
 
+    // Password of the user. It must contain at least 5 characters.
     @NotNull
     @Column(name = "password", nullable = false)
     @Size(min = 5, message = "The field must contain at least 5 characters.")
     private String password;
 
+    // Age of the user. It must be at least 18.
     @NotNull
     @Column(name = "age", nullable = false)
     @Min(value = 18, message = "The field must have a value of at least 18.")
     private Integer age;
 
+    // Information associated with the user account.
     @ManyToMany(mappedBy = "userAccounts", fetch = FetchType.LAZY)
     private Set<Information> information = new HashSet<>();
 
+    // Role associated with the user account.
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
+    // Default constructor
     public UserAccount() {
     }
 
+    // Constructor with fields
     public UserAccount(String firstName, String lastName, String login, String password, Integer age) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -59,6 +72,7 @@ public class UserAccount {
         this.age = age;
     }
 
+    // Getters and setters for the fields
     public Long getId() {
         return id;
     }

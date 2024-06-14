@@ -3,6 +3,7 @@ package com.example.storyeverything.security;
 import com.example.storyeverything.security.jwt.JwtRequestFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -23,6 +24,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests((requests) -> requests
                         .antMatchers("/api/authenticate", "/api/logout", "/api/register").permitAll()
                         .antMatchers("/api/admin/**").hasRole("ADMIN")
+                        .antMatchers(HttpMethod.GET, "/api/information/**", "/api/category/**").hasAnyRole("UNLIMITED_USER", "LIMITED_USER")
+                        .antMatchers("/api/information/**", "/api/category/**").hasRole("UNLIMITED_USER")
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
