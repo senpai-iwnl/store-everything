@@ -37,7 +37,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/register").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/information/public/**").permitAll()
-                        .requestMatchers("/api/public/**").permitAll()
+                        .requestMatchers("/api/public/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

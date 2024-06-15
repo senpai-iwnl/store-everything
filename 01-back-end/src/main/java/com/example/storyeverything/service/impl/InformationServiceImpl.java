@@ -45,6 +45,8 @@ public class InformationServiceImpl implements InformationService {
         List<Information> information = informationRepository.findAllByUserAccountId(userAccountId);
         return informationMapper.toDTOList(information);
     }
+
+    @Override
     public List<InformationDTO> findAllPublic(String login) {
         List<Information> information = informationRepository.findAllByIsPublic(true);
         return informationMapper.toDTOList(information);
