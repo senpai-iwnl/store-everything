@@ -15,6 +15,8 @@ import java.util.Optional;
 public interface InformationRepository extends JpaRepository<Information, Long> {
     List<Information> findAllByUserAccountId(Long id);
     Optional<Information> findByIdAndUserAccountId(Long id, Long userAccountId);
+    Optional<Information> findById(Long id);
+    List<Information> findAllByIsPublic(Boolean isPublic);
     Page<Information> findAllByUserAccountId(Long userAccountId, Pageable pageable);
 
 }

@@ -29,6 +29,13 @@ public class InformationRestController {
         List<InformationDTO> information = informationService.findAllByLogin(login);
         return ResponseEntity.ok(information);
     }
+    @GetMapping("/public")
+    public ResponseEntity<List<InformationDTO>> findAllPublic(@RequestHeader("Authorization") String token){
+        String jwtToken = token.substring(7);
+        String login = jwtUtil.extractLogin(jwtToken);
+        List<InformationDTO> information = informationService.findAllPublic(login);
+        return ResponseEntity.ok(information);
+    }
 
     @GetMapping("/paged")
     public ResponseEntity<Page<InformationDTO>> findAllPaged(
@@ -46,10 +53,29 @@ public class InformationRestController {
 
     @GetMapping("/{id}")
     public ResponseEntity<InformationDTO> findById(@PathVariable Long id, @RequestHeader("Authorization") String token) {
+//        if (token.isEmpty()) {
+//            System.out.println("Empty token");
+//        }
         String jwtToken = token.substring(7);
         String username = jwtUtil.extractLogin(jwtToken);
         InformationDTO information = informationService.findByIdAndLogin(id, username);
         return ResponseEntity.ok(information);
+    }
+    @GetMapping("/public/{id}")
+    public ResponseEntity<InformationDTO> findById(@PathVariable Long id) {
+//        if (token.isEmpty()) {
+//            System.out.println("Empty token");
+//        }
+        //String jwtToken = token.substring(7);
+        //String username = jwtUtil.extractLogin(jwtToken);
+        try {
+            InformationDTO information = informationService.findById(id);
+            return ResponseEntity.ok(information);
+
+        }
+        catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping
@@ -61,6 +87,7 @@ public class InformationRestController {
     }
 
     @PutMapping("/{id}")
+//    @PutMapping("/{id}")
     public ResponseEntity<InformationDTO> updateInformation(@PathVariable Long id, @RequestBody InformationDTO informationDTO, @RequestHeader("Authorization") String token) {
         String jwtToken = token.substring(7);
         String username = jwtUtil.extractLogin(jwtToken);

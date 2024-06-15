@@ -1,6 +1,7 @@
 package com.example.storyeverything.rest;
 
 import com.example.storyeverything.dto.UserAccountDTO;
+import com.example.storyeverything.security.jwt.JwtUtil;
 import com.example.storyeverything.service.UserAccountService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -13,9 +14,11 @@ import java.util.List;
 @RequestMapping("/api")
 public class UserAccountRestController {
     private final UserAccountService userAccountService;
+    private final JwtUtil jwtUtil;
 
-    public UserAccountRestController(UserAccountService userAccountService) {
+    public UserAccountRestController(UserAccountService userAccountService, JwtUtil jwtUtil) {
         this.userAccountService = userAccountService;
+        this.jwtUtil = jwtUtil;
     }
 
     @GetMapping("/admin/users")
@@ -38,11 +41,11 @@ public class UserAccountRestController {
         return ResponseEntity.ok(updatedUser);
     }
 
-    @DeleteMapping("admin/users/{id}")
+    @DeleteMapping("/admin/users/{id}")
     public ResponseEntity<Void> delete(@PathVariable long id){
         userAccountService.deleteById(id);
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/users/{id}")
@@ -51,6 +54,16 @@ public class UserAccountRestController {
 
         return ResponseEntity.ok(userAccount);
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserAccountDTO> findByLogin(@RequestHeader("Authorization") String token){
+        System.out.println("/me");
+        String jwtToken = token.substring(7);
+        String login = jwtUtil.extractLogin(jwtToken);
+        UserAccountDTO userAccount = userAccountService.findByLogin(login);
+        return ResponseEntity.ok(userAccount);
+    }
+
 
     @PutMapping("/users/{id}")
     public ResponseEntity<UserAccountDTO> updateAsUser(@PathVariable long id,@Valid @RequestBody UserAccountDTO userAccountDTO){
@@ -61,8 +74,8 @@ public class UserAccountRestController {
 
     @PostMapping("/register")
     public ResponseEntity<UserAccountDTO> addAsUser(@Valid @RequestBody UserAccountDTO userAccountDTO){
+        System.out.println(userAccountDTO);
         UserAccountDTO newUserAccount = userAccountService.createAsUser(userAccountDTO);
-
         return new ResponseEntity<>(newUserAccount, HttpStatus.CREATED);
     }
 }

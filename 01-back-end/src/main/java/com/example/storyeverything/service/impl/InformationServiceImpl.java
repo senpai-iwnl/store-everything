@@ -47,6 +47,12 @@ public class InformationServiceImpl implements InformationService {
     }
 
     @Override
+    public List<InformationDTO> findAllPublic(String login) {
+        List<Information> information = informationRepository.findAllByIsPublic(true);
+        return informationMapper.toDTOList(information);
+    }
+
+    @Override
     public Page<InformationDTO> findAllByLoginWithPagination(String login, int page, int size, String sortBy, String direction) {
         Long userAccountId = userAccountRepository.findByLogin(login)
                 .orElseThrow(() -> new FieldNotFoundException("UserAccount", "login", login)).getId();
@@ -65,12 +71,25 @@ public class InformationServiceImpl implements InformationService {
         Long userAccountId = userAccountRepository.findByLogin(login)
                 .orElseThrow(() -> new FieldNotFoundException("UserAccount", "login", login)).getId();
 
-        if(information.getPublic()){
+        if(information.getIsPublic()){
             return informationMapper.toDTO(information);
         } else if (informationRepository.findByIdAndUserAccountId(id, userAccountId).isPresent()) {
             return informationMapper.toDTO(information);
         } else {
             throw new InformationAccessDeniedException(login, id.toString());
+        }
+    }
+
+    @Override
+    public InformationDTO findById(Long id) {
+        Information information = informationRepository.findById(id)
+                .orElseThrow(() -> new FieldNotFoundException("Information", "id", id.toString()));
+        if(information.getIsPublic()){
+            return informationMapper.toDTO(information);
+        //}// else if (informationRepository.findById(id).isPresent()) {
+        //    return informationMapper.toDTO(information);
+        } else {
+            throw new InformationAccessDeniedException("anonymous", id.toString());
         }
     }
 

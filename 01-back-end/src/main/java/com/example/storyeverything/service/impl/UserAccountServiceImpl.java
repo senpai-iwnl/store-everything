@@ -49,12 +49,22 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
+    public UserAccountDTO findByLogin(String login) {
+        //String login = userAccountDTO.getLogin();
+        System.out.println("findByLogin");
+        UserAccount userAccount = userAccountRepository.findByLogin(login)
+                .orElseThrow(() -> new FieldNotFoundException("UserAccount", "login", login));
+        return userAccountMapper.toDTO(userAccount);
+    }
+
+
+    @Override
     public UserAccountDTO createAsUser(UserAccountDTO userAccountDTO) {
         if (!isLoginAvailable(userAccountDTO.getLogin())) {
             throw new DuplicateLoginException("Login is already in use");
         }
 
-        userAccountDTO.setRole("LIMITED_USER");
+        userAccountDTO.setRole("ROLE_LIMITED_USER");
 
         userAccountDTO.setPassword(encodingPassword(userAccountDTO.getPassword()));
 
@@ -71,12 +81,16 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     @Override
     public UserAccountDTO createAsAdmin(UserAccountDTO userAccountDTO) {
+        userAccountDTO.setPassword(encodingPassword(userAccountDTO.getPassword()));
         if (!isLoginAvailable(userAccountDTO.getLogin())) {
             throw new DuplicateLoginException("Login is already in use");
         }
 
         UserAccount userAccount = userAccountMapper.toEntity(userAccountDTO, roleRepository);
         // default user role
+
+        userAccountDTO.setPassword(encodingPassword(userAccountDTO.getPassword()));
+
         Role newRole = roleRepository.findByName(userAccountDTO.getRole())
                 .orElseThrow(() -> new FieldNotFoundException("Role", "id", userAccountDTO.getRole()));
 
@@ -97,7 +111,7 @@ public class UserAccountServiceImpl implements UserAccountService {
             throw new DuplicateLoginException("Login is already in use");
         }
 
-        if(userAccountDTO.getPassword() != null)
+        if(userAccountDTO.getPassword().length() > 0)
             userAccountDTO.setPassword(encodingPassword(userAccountDTO.getPassword()));
         else
             userAccountDTO.setPassword(userAccount.getPassword());
