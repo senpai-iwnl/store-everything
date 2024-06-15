@@ -87,6 +87,9 @@ public class UserAccountServiceImpl implements UserAccountService {
 
         UserAccount userAccount = userAccountMapper.toEntity(userAccountDTO, roleRepository);
         // default user role
+
+        userAccountDTO.setPassword(encodingPassword(userAccountDTO.getPassword()));
+
         Role newRole = roleRepository.findByName(userAccountDTO.getRole())
                 .orElseThrow(() -> new FieldNotFoundException("Role", "id", userAccountDTO.getRole()));
 
