@@ -2,8 +2,7 @@
 INSERT INTO role (name) VALUES 
 ('ROLE_ADMIN'), 
 ('ROLE_LIMITED_USER'), 
-('ROLE_FULL_USER'), 
-('ROLE_GUEST');
+('ROLE_FULL_USER');
 
 -- Create categories
 INSERT INTO category (name) VALUES
@@ -25,8 +24,8 @@ INSERT INTO category (name) VALUES
 -- Create users pw admin
 INSERT INTO user_account (first_name, last_name, login, password, age, role_id) VALUES
 ('Admin', 'User', 'admin', '$2a$10$xZQOItwVcbuo/fLmgRj42u5IefqKWfdIRWpDSEGi3lK0Gr.fIpBHe', 30, (SELECT id FROM role WHERE name = 'ROLE_ADMIN')),
-('Limited', 'User', 'limited_user', '$2a$10$xZQOItwVcbuo/fLmgRj42u5IefqKWfdIRWpDSEGi3lK0Gr.fIpBHe', 25, (SELECT id FROM role WHERE name = 'ROLE_LIMITED_USER')),
-('Unlimited', 'User', 'unlimited_user', '$2a$10$xZQOItwVcbuo/fLmgRj42u5IefqKWfdIRWpDSEGi3lK0Gr.fIpBHe', 28, (SELECT id FROM role WHERE name = 'ROLE_UNLIMITED_USER'));
+('Unlimited', 'User', 'unlimited_user', '$2a$10$xZQOItwVcbuo/fLmgRj42u5IefqKWfdIRWpDSEGi3lK0Gr.fIpBHe', 28, (SELECT id FROM role WHERE name = 'ROLE_UNLIMITED_USER')),
+('Limited', 'User', 'limited_user', '$2a$10$xZQOItwVcbuo/fLmgRj42u5IefqKWfdIRWpDSEGi3lK0Gr.fIpBHe', 25, (SELECT id FROM role WHERE name = 'ROLE_LIMITED_USER'));
 
 -- Create information entries
 INSERT INTO information (title, content, link, add_date, category_id, remainder, is_public) VALUES
