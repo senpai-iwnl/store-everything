@@ -81,6 +81,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     @Override
     public UserAccountDTO createAsAdmin(UserAccountDTO userAccountDTO) {
+        userAccountDTO.setPassword(encodingPassword(userAccountDTO.getPassword()));
         if (!isLoginAvailable(userAccountDTO.getLogin())) {
             throw new DuplicateLoginException("Login is already in use");
         }
