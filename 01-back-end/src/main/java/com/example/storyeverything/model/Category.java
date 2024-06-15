@@ -23,6 +23,8 @@ public class Category {
     public Category() {
     }
 
+    // Getters and setters omitted for brevity
+
     public Category(String name) {
         this.name = name;
     }

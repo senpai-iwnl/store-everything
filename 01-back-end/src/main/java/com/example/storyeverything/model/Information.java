@@ -69,6 +69,8 @@ public class Information {
         this.link = link;
     }
 
+    // Getters and setters omitted for brevity
+
     public Long getId() {
         return id;
     }
