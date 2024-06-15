@@ -9,7 +9,7 @@ public class InformationDTO {
     private String content;
     private String link;
     private LocalDate addDate;
-    private LocalDateTime remainder;
+    private LocalDate remainder;
     private boolean isPublic;
     private String categoryName;
     private long userAccountId;
@@ -17,7 +17,7 @@ public class InformationDTO {
     public InformationDTO() {
     }
 
-    public InformationDTO(long id, String title, String content, String link, LocalDate addDate, LocalDateTime remainder, boolean isPublic, String categoryName, long userAccountId) {
+    public InformationDTO(long id, String title, String content, String link, LocalDate addDate, LocalDate remainder, boolean isPublic, String categoryName, long userAccountId) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -69,11 +69,11 @@ public class InformationDTO {
         this.addDate = addDate;
     }
 
-    public LocalDateTime getRemainder() {
+    public LocalDate getRemainder() {
         return remainder;
     }
 
-    public void setRemainder(LocalDateTime remainder) {
+    public void setRemainder(LocalDate remainder) {
         this.remainder = remainder;
     }
 

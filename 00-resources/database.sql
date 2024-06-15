@@ -3,11 +3,13 @@ CREATE TABLE category (
     name VARCHAR(20) NOT NULL CHECK (length(name) BETWEEN 3 AND 20 AND lower(name) = name)
 );
 
+-- Tabela dla ról
 CREATE TABLE role (
     id SERIAL PRIMARY KEY,
     name VARCHAR(20) NOT NULL UNIQUE CHECK (name IN ('ROLE_ADMIN', 'ROLE_LIMITED_USER', 'ROLE_FULL_USER', 'ROLE_GUEST'))
 );
 
+-- Tabela dla użytkowników
 CREATE TABLE user_account (
     id SERIAL PRIMARY KEY,
     first_name VARCHAR(20) NOT NULL CHECK (length(first_name) BETWEEN 3 AND 20 AND first_name = initcap(first_name)),
@@ -19,6 +21,7 @@ CREATE TABLE user_account (
     FOREIGN KEY (role_id) REFERENCES role(id)
 );
 
+-- Tabela dla informacji
 CREATE TABLE information (
     id SERIAL PRIMARY KEY,
     title VARCHAR(20) NOT NULL CHECK (length(title) BETWEEN 3 AND 20),
@@ -31,10 +34,10 @@ CREATE TABLE information (
     FOREIGN KEY (user_account_id) REFERENCES user_account(id)
 );
 
-INSERT INTO role (name) VALUES 
-('ROLE_ADMIN'), 
-('ROLE_LIMITED_USER'), 
-('ROLE_FULL_USER'), 
+INSERT INTO role (name) VALUES
+('ROLE_ADMIN'),
+('ROLE_LIMITED_USER'),
+('ROLE_FULL_USER'),
 ('ROLE_GUEST');
 INSERT INTO category (name) VALUES
 ('personal info'),

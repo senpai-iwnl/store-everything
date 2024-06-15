@@ -31,10 +31,13 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests((requests) -> requests
+                        //.requestMatchers("/api/**").permitAll()
                         .requestMatchers("/api/authenticate").permitAll()
                         .requestMatchers("/api/logout").permitAll()
                         .requestMatchers("/api/register").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/information/public/**").permitAll()
+                        .requestMatchers("/api/public/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

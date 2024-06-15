@@ -5,8 +5,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
+//import java.time.LocalDateTime;
+//import java.util.Date;
 
 @Entity(name = "information")
 
@@ -26,10 +26,9 @@ public class Information {
     private String link;
     @NotNull
     @Column(name = "add_date", nullable = false)
-    @Temporal(TemporalType.DATE)
     private LocalDate addDate;
-    @Column(name = "remainder", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP + interval '1 day'")
-    private LocalDateTime remainder;
+    @Column(name = "remainder", nullable = true)
+    private LocalDate remainder;
     @Column(name = "is_public", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean isPublic = false;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -44,7 +43,7 @@ public class Information {
     public void prePersist() {
         addDate = LocalDate.now();
         if (remainder == null) {
-            remainder = LocalDateTime.now().plusDays(1);
+            remainder = LocalDate.now().plusDays(1);
         }
         if (isPublic == null) {
             isPublic = false;
@@ -100,20 +99,20 @@ public class Information {
         this.addDate = addDate;
     }
 
-    public LocalDateTime getRemainder() {
+    public LocalDate getRemainder() {
         return remainder;
     }
 
-    public void setRemainder(LocalDateTime remainder) {
+    public void setRemainder(LocalDate remainder) {
         this.remainder = remainder;
     }
 
-    public Boolean getPublic() {
+    public Boolean getIsPublic() {
         return isPublic;
     }
 
-    public void setPublic(Boolean aPublic) {
-        isPublic = aPublic;
+    public void setIsPublic(Boolean isPublic) {
+        this.isPublic = isPublic;
     }
 
     public Category getCategory() {
